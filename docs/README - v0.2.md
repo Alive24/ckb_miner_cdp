@@ -7,6 +7,8 @@ Combine CKB mining and collateralized debt positions (CDPs) to implement decentr
 ### Initiatives
 
 - Decentralization: Mining, Speculating, Leveraging, Settlement.
+  - Collective mining instead of single miner;
+  - Decouple mining provider and mining sponsor, offering and recruiting;
 - Mining-Specific DeFi: Mining Offering, Mining Recruiting
 - Collateralization: Liquidation, Redemption, Stability Pool
 - Community: Open-source; Fund DAO; Price stabilization;
@@ -37,7 +39,7 @@ Combine CKB mining and collateralized debt positions (CDPs) to implement decentr
 ### Redemption
 
 - Holders of mining contract tokens can redeem them for the target asset 1:1 for the collaterals in the protocol treasury;
-- Redemption can take 7 and 28 days at different fee rate.
+- Redemption can take different time length (instant, 1 day, 7 days, 28 days) at different fee rate
 - Mining providers can set an additional interest rate to move further back in the redemption queue.
 - Redemption targets are selected based on the miners' additional interest rate and then their ICR;
 
@@ -102,3 +104,10 @@ Combine CKB mining and collateralized debt positions (CDPs) to implement decentr
 
 - Multiply: One-click Restaking for CKB exposure;
 - Loan: Loan CKB(iCKB) by staking CKB or other collaterals;
+
+## Miscellaneous
+
+1. Prefer iCKB whenever possible;
+
+
+
