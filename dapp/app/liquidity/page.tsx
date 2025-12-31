@@ -21,10 +21,10 @@ export default function LiquidityPage() {
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Liquidity Pool</h2>
+          <h2 className="text-3xl font-bold mb-2">Stability Pool (M2)</h2>
           <p className="text-muted-foreground">
-            Earn rewards from redemption fees, liquidations, and protocol
-            incentives
+            Provide stability liquidity to support redemptions and liquidations,
+            and earn protocol rewards.
           </p>
         </div>
 
@@ -33,9 +33,9 @@ export default function LiquidityPage() {
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Provide Liquidity</CardTitle>
+                <CardTitle>Provide Stability Liquidity</CardTitle>
                 <CardDescription>
-                  Deposit CKB to earn a share of protocol fees and rewards
+                  Deposit CKB to back redemptions and liquidation flows.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -56,7 +56,7 @@ export default function LiquidityPage() {
                 <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Estimated Returns</span>
+                    <span className="font-semibold">Estimated Returns (M2)</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -73,7 +73,7 @@ export default function LiquidityPage() {
                   <div className="pt-3 border-t border-primary/20">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">
-                        Total APY
+                        Total APY (Target)
                       </span>
                       <span className="text-xl font-bold">10.8%</span>
                     </div>
@@ -89,9 +89,9 @@ export default function LiquidityPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
-                      LP Tokens Received
+                      Stability Shares
                     </span>
-                    <span className="font-medium">~9,950 LP-CKB</span>
+                    <span className="font-medium">~9,950 SP-CKB</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Deposit Fee</span>
@@ -111,7 +111,7 @@ export default function LiquidityPage() {
               <CardHeader>
                 <CardTitle>Revenue Sources</CardTitle>
                 <CardDescription>
-                  How liquidity providers earn rewards
+                  How stability providers earn rewards
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -120,25 +120,25 @@ export default function LiquidityPage() {
                     {
                       source: "Redemption Fees",
                       percentage: "45%",
-                      description: "Fees collected from mCKB redemptions",
+                      description: "Fees collected from redemption queues",
                       amount: "2,450 CKB",
                     },
                     {
                       source: "Liquidation Bonuses",
                       percentage: "30%",
-                      description: "Profits from liquidating risky positions",
+                      description: "Rewards from liquidation participation",
                       amount: "1,634 CKB",
                     },
                     {
                       source: "Mining Offering Fees",
                       percentage: "15%",
-                      description: "Fees from creating new offerings",
+                      description: "Fees from creating new mining schedules",
                       amount: "817 CKB",
                     },
                     {
-                      source: "Protocol Incentives",
+                      source: "Protocol Token (M2)",
                       percentage: "10%",
-                      description: "NVT token rewards from treasury",
+                      description: "Protocol token rewards from treasury",
                       amount: "545 CKB",
                     },
                   ].map((revenue, i) => (
@@ -170,7 +170,7 @@ export default function LiquidityPage() {
           <div className="space-y-6">
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <CardHeader>
-                <CardTitle>Your Liquidity Position</CardTitle>
+                <CardTitle>Your Stability Position</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -187,9 +187,9 @@ export default function LiquidityPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    LP Tokens
+                    Stability Shares
                   </span>
-                  <span className="font-semibold">497,500 LP-CKB</span>
+                  <span className="font-semibold">497,500 SP-CKB</span>
                 </div>
 
                 <div className="pt-4 border-t border-primary/20">
@@ -204,11 +204,9 @@ export default function LiquidityPage() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">
-                        Protocol Tokens
+                        Protocol Tokens (M2)
                       </span>
-                      <span className="font-semibold text-primary">
-                        1,234 NVT
-                      </span>
+                      <span className="font-semibold text-primary">1,234</span>
                     </div>
                   </div>
                 </div>
@@ -267,25 +265,25 @@ export default function LiquidityPage() {
                 <div className="flex gap-2">
                   <span className="text-primary font-bold">•</span>
                   <p className="text-muted-foreground">
-                    Earn fees from all redemptions
+                    Support faster redemptions for the community
                   </p>
                 </div>
                 <div className="flex gap-2">
                   <span className="text-primary font-bold">•</span>
                   <p className="text-muted-foreground">
-                    Profit from liquidation bonuses
+                    Participate in liquidation rewards
                   </p>
                 </div>
                 <div className="flex gap-2">
                   <span className="text-primary font-bold">•</span>
                   <p className="text-muted-foreground">
-                    Receive NVT protocol tokens
+                    Earn protocol tokens (M2)
                   </p>
                 </div>
                 <div className="flex gap-2">
                   <span className="text-primary font-bold">•</span>
                   <p className="text-muted-foreground">
-                    Withdraw anytime without lockup
+                    Withdraw anytime without long lockups
                   </p>
                 </div>
               </CardContent>

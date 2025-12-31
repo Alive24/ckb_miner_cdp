@@ -51,7 +51,7 @@ const navbar = (
           href="/liquidity"
           className="text-sm hover:text-primary transition-colors"
         >
-          Liquidity
+          Stability Pool
         </Link>
         <Link
           href="/treasury"
@@ -79,7 +79,7 @@ const footer = <Footer>MIT {new Date().getFullYear()} © CoMine.</Footer>;
 export const metadata: Metadata = {
   title: "CoMine - CKB Mining CDP Protocol",
   description:
-    "Decentralized CKB mining with collateralized debt positions. Combine mining and DeFi for the Nervos ecosystem.",
+    "Tokenised CKB mining with collateralised debt positions, redemption queues, and treasury safeguards for the Nervos ecosystem.",
   generator: "v0.app",
   icons: {
     icon: [

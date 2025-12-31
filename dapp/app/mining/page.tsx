@@ -34,52 +34,52 @@ export default function MiningPage() {
     {
       id: 1,
       provider: "0x7a8b...3c4d",
-      rate: "3.2%",
+      price: "0.95 CKB",
       volume: "50,000",
       icr: "195%",
       status: "active",
       minAmount: "1,000",
-      duration: "30 days",
+      settlement: "28 days",
     },
     {
       id: 2,
       provider: "0x9f2e...1a5b",
-      rate: "3.5%",
+      price: "0.97 CKB",
       volume: "75,000",
       icr: "210%",
       status: "active",
       minAmount: "5,000",
-      duration: "60 days",
+      settlement: "14 days",
     },
     {
       id: 3,
       provider: "0x4c6d...8e2f",
-      rate: "3.8%",
+      price: "0.92 CKB",
       volume: "100,000",
       icr: "185%",
       status: "active",
       minAmount: "2,500",
-      duration: "90 days",
+      settlement: "28 days",
     },
     {
       id: 4,
       provider: "0x1b3c...9d7e",
-      rate: "3.1%",
+      price: "0.98 CKB",
       volume: "25,000",
       icr: "200%",
       status: "active",
       minAmount: "500",
-      duration: "30 days",
+      settlement: "7 days",
     },
     {
       id: 5,
       provider: "0x5e8f...2a1c",
-      rate: "3.6%",
+      price: "0.94 CKB",
       volume: "60,000",
       icr: "188%",
       status: "active",
       minAmount: "3,000",
-      duration: "45 days",
+      settlement: "14 days",
     },
   ];
 
@@ -89,7 +89,8 @@ export default function MiningPage() {
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Mining</h2>
           <p className="text-muted-foreground">
-            Create mining offerings or recruit from existing providers
+            Create mining schedules as a provider or sponsor through offerings
+            and recruiting.
           </p>
         </div>
 
@@ -98,18 +99,22 @@ export default function MiningPage() {
           <div className="lg:col-span-2">
             <Tabs defaultValue="offering" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="offering">Mining Offering</TabsTrigger>
-                <TabsTrigger value="recruiting">Mining Recruiting</TabsTrigger>
+                <TabsTrigger value="offering">
+                  Mining Offering (Provider)
+                </TabsTrigger>
+                <TabsTrigger value="recruiting">
+                  Mining Recruiting (Sponsor)
+                </TabsTrigger>
               </TabsList>
 
               {/* Mining Offering Tab */}
               <TabsContent value="offering" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Stake Collateral & Mint mCKB</CardTitle>
+                    <CardTitle>Publish a Mining Offering</CardTitle>
                     <CardDescription>
-                      Lock CKB as collateral to participate in mining and mint
-                      mCKB tokens
+                      Deposit collateral, mint mCKB, and set a price for sponsors
+                      to buy future mining yields.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
@@ -141,6 +146,15 @@ export default function MiningPage() {
                       </p>
                     </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="price">Price per mCKB (CKB)</Label>
+                      <Input id="price" type="number" placeholder="0.95" />
+                      <p className="text-xs text-muted-foreground">
+                        You can price in CKB or a stable coin; lower prices
+                        attract sponsors faster.
+                      </p>
+                    </div>
+
                     <div className="rounded-lg bg-muted p-4 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">
@@ -162,9 +176,11 @@ export default function MiningPage() {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">
-                          Est. Annual Mining Yield
+                          Settlement Window
                         </span>
-                        <span className="font-medium text-green-600">3.2%</span>
+                        <span className="font-medium text-green-600">
+                          28 days
+                        </span>
                       </div>
                     </div>
 
@@ -176,11 +192,9 @@ export default function MiningPage() {
                             Important Information
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Your collateral will be locked and used for CKB
-                            mining. You must maintain a minimum 150% collateral
-                            ratio to avoid liquidation. Mining rewards will be
-                            distributed based on your share of the total mining
-                            pool.
+                            Maintain a healthy ICR to avoid recovery mode.
+                            Falling below CCR triggers partial liquidation;
+                            dropping below LCR triggers full liquidation.
                           </p>
                         </div>
                       </div>
@@ -188,7 +202,7 @@ export default function MiningPage() {
 
                     <Button className="w-full" size="lg">
                       <ArrowUpRight className="mr-2 h-4 w-4" />
-                      Create Mining Offering
+                      Publish Mining Offering
                     </Button>
                   </CardContent>
                 </Card>
@@ -212,7 +226,7 @@ export default function MiningPage() {
                         </div>
                         <Button variant="outline">
                           <TrendingUp className="h-4 w-4 mr-2" />
-                          Sort by APY
+                          Sort by Price
                         </Button>
                       </div>
                     </CardContent>
@@ -221,15 +235,14 @@ export default function MiningPage() {
                   {/* Offerings List */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>Available Mining Offerings</CardTitle>
-                      <CardDescription>
-                        Select an offering to participate in CKB mining as a
-                        sponsor
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {offerings.map((offer) => (
+                        <CardTitle>Available Mining Offerings</CardTitle>
+                        <CardDescription>
+                          Select a mining offering to sponsor future CKB mining
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {offerings.map((offer) => (
                           <div
                             key={offer.id}
                             className={`p-4 rounded-lg border transition-all cursor-pointer ${
@@ -253,16 +266,16 @@ export default function MiningPage() {
                                   </Badge>
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                  Min Amount: {offer.minAmount} mCKB • Duration:{" "}
-                                  {offer.duration}
+                                  Min Amount: {offer.minAmount} mCKB •
+                                  Settlement: {offer.settlement}
                                 </p>
                               </div>
                               <div className="text-right">
                                 <p className="text-2xl font-bold text-green-600">
-                                  {offer.rate}
+                                  {offer.price}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  APY
+                                  Price per mCKB
                                 </p>
                               </div>
                             </div>
@@ -297,7 +310,7 @@ export default function MiningPage() {
                       <CardHeader>
                         <CardTitle>Accept Offering</CardTitle>
                         <CardDescription>
-                          Enter amount to sponsor
+                          Enter the amount you want to sponsor
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -318,23 +331,23 @@ export default function MiningPage() {
                         <div className="rounded-lg bg-muted p-4 space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">
-                              Expected APY
+                              Price per mCKB
                             </span>
                             <span className="font-medium text-green-600">
                               {
                                 offerings.find((o) => o.id === selectedOffering)
-                                  ?.rate
+                                  ?.price
                               }
                             </span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">
-                              Duration
+                              Settlement Window
                             </span>
                             <span className="font-medium">
                               {
                                 offerings.find((o) => o.id === selectedOffering)
-                                  ?.duration
+                                  ?.settlement
                               }
                             </span>
                           </div>
@@ -390,11 +403,9 @@ export default function MiningPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
-                      Mining Rewards
+                      Recovery Mode Status
                     </span>
-                    <span className="font-medium text-green-600">
-                      1,245.67 CKB
-                    </span>
+                    <span className="font-medium text-green-600">Healthy</span>
                   </div>
                 </div>
 
@@ -405,7 +416,7 @@ export default function MiningPage() {
                   </div>
                   <Progress value={85} className="h-2 mb-2" />
                   <p className="text-xs text-muted-foreground">
-                    Safe - Well above liquidation threshold (150%)
+                    Safe - Well above recovery threshold (CCR)
                   </p>
                 </div>
 
@@ -427,7 +438,13 @@ export default function MiningPage() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    Minimum ICR
+                    Minimum ICR (LCR)
+                  </span>
+                  <span className="text-sm font-medium">150%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Recovery Mode (CCR)
                   </span>
                   <span className="text-sm font-medium">150%</span>
                 </div>
@@ -441,15 +458,7 @@ export default function MiningPage() {
                   <span className="text-sm text-muted-foreground">
                     Active Offerings
                   </span>
-                  <span className="text-sm font-medium">1,247</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    Avg Mining APY
-                  </span>
-                  <span className="text-sm font-medium text-green-600">
-                    3.4%
-                  </span>
+                  <span className="text-sm font-medium text-green-600">1,247</span>
                 </div>
               </CardContent>
             </Card>

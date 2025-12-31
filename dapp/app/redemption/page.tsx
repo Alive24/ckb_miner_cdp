@@ -23,11 +23,12 @@ export default function RedemptionPage() {
       time: "Instant",
       fee: "2.0%",
       days: 0,
-      description: "Immediate redemption",
+      description: "Immediate settlement",
     },
     { time: "1 Day", fee: "1.0%", days: 1, description: "Wait 1 day" },
     { time: "7 Days", fee: "0.5%", days: 7, description: "Wait 1 week" },
-    { time: "28 Days", fee: "0.2%", days: 28, description: "Best rate" },
+    { time: "14 Days", fee: "0.3%", days: 14, description: "Wait 2 weeks" },
+    { time: "28 Days", fee: "0.2%", days: 28, description: "Lowest fee" },
   ];
 
   return (
@@ -36,7 +37,7 @@ export default function RedemptionPage() {
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Redeem mCKB</h2>
           <p className="text-muted-foreground">
-            Exchange mCKB tokens for CKB collateral at flexible time lengths
+            Exchange mCKB for protocol collateral with multiple settlement windows
           </p>
         </div>
 
@@ -47,7 +48,7 @@ export default function RedemptionPage() {
               <CardHeader>
                 <CardTitle>Redeem mCKB for CKB</CardTitle>
                 <CardDescription>
-                  Choose your redemption speed to optimize fees
+                  Choose your redemption window to optimize fees
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -93,8 +94,8 @@ export default function RedemptionPage() {
                     ))}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Lower fees reward patience. Instant redemptions incur higher
-                    costs to compensate the protocol.
+                    Lower fees reward patience. Instant settlement incurs higher
+                    costs to protect protocol solvency.
                   </p>
                 </div>
 
@@ -113,7 +114,7 @@ export default function RedemptionPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Exchange Rate</span>
-                    <span className="font-medium">1 mCKB = 1.02 CKB</span>
+                    <span className="font-medium">1 mCKB = 1 CKB</span>
                   </div>
                   {selectedSpeed && selectedSpeed !== "Instant" && (
                     <div className="flex justify-between text-sm pt-2 border-t border-border">
@@ -239,29 +240,29 @@ export default function RedemptionPage() {
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
                 <p className="text-muted-foreground">
-                  Redemption allows you to exchange mCKB for the underlying CKB
-                  collateral from the protocol.
+                  Redemption exchanges mCKB for protocol collateral. Redemptions
+                  are ordered by ICR, with lower ICR providers targeted first.
                 </p>
                 <div className="space-y-2">
                   <div className="flex gap-2">
                     <span className="text-primary font-bold">•</span>
                     <p className="text-muted-foreground">
-                      <strong>Instant:</strong> Get your CKB immediately with a
-                      2% fee
+                      <strong>Settlement Windows:</strong> Instant to 28 days
+                      with transparent fees.
                     </p>
                   </div>
                   <div className="flex gap-2">
                     <span className="text-primary font-bold">•</span>
                     <p className="text-muted-foreground">
-                      <strong>Delayed:</strong> Wait longer for significantly
-                      lower fees
+                      <strong>Default Asset:</strong> Redemption defaults to
+                      iCKB; CKB may require extra waiting time.
                     </p>
                   </div>
                   <div className="flex gap-2">
                     <span className="text-primary font-bold">•</span>
                     <p className="text-muted-foreground">
-                      <strong>Fair Price:</strong> Redemption happens at current
-                      market rates
+                      <strong>Protocol Token (M2):</strong> Use protocol tokens
+                      to waive one-time redemption fees.
                     </p>
                   </div>
                 </div>
@@ -277,7 +278,7 @@ export default function RedemptionPage() {
                   <span className="text-sm text-muted-foreground">
                     mCKB/CKB Rate
                   </span>
-                  <span className="text-sm font-medium">1.02</span>
+                  <span className="text-sm font-medium">1.00</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">

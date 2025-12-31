@@ -24,13 +24,11 @@ import Link from "next/link";
 export default function CoMinePage() {
   // Mock data
   const mockData = {
-    tvl: "24,856,432",
-    totalDebt: "18,642,100",
-    icr: 185,
+    collateralLocked: "24,856,432",
+    activeSchedules: 1247,
     tcr: 167,
-    miningRewards: "1,245.67",
-    liquidityProvided: "500,000",
-    activeProviders: 1247,
+    mckbOutstanding: "18.6M",
+    treasuryReserve: "12.4M",
     liquidityAPY: "8.5",
   };
 
@@ -41,50 +39,58 @@ export default function CoMinePage() {
         <section className="container mx-auto px-4 py-20 text-center">
           <Badge className="mb-6" variant="outline">
             <Activity className="h-3 w-3 mr-1" />
-            Now Live on Nervos Network
+            Milestone 1: Collective Mining
           </Badge>
           <h2 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-balance">
-            Unlock Liquidity from
-            <span className="text-primary"> CKB Mining</span>
+            Tokenised CKB Mining for
+            <span className="text-primary"> the Community</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 text-pretty">
-            CoMine is a decentralized protocol that enables CKB holders to earn
-            mining rewards while maintaining liquidity through collateralized
-            debt positions.
+            CoMine blends mining schedules with collateralised debt positions so
+            miners and sponsors can share mining yields, access liquidity
+            earlier, and keep the protocol solvent with transparent rules.
           </p>
           <div className="flex items-center justify-center gap-4">
             <Button size="lg" className="gap-2" asChild>
               <Link href="/mining">
-                Start Mining
+                Explore Mining Schedules
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/treasury">View Protocol Stats</Link>
+              <Link href="/docs">Read the Docs</Link>
             </Button>
           </div>
 
           {/* Stats Bar */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
             <div className="text-center">
-              <p className="text-3xl font-bold">${mockData.tvl}</p>
+              <p className="text-3xl font-bold">
+                {mockData.collateralLocked} CKB
+              </p>
               <p className="text-sm text-muted-foreground">
-                Total Value Locked
+                Total Collateral Locked
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold">
+                {mockData.activeSchedules}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Active Mining Schedules
               </p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold">{mockData.tcr}%</p>
               <p className="text-sm text-muted-foreground">
-                Avg Collateral Ratio
+                Total Collateral Ratio
               </p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold">{mockData.activeProviders}</p>
-              <p className="text-sm text-muted-foreground">Active Providers</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl font-bold">{mockData.liquidityAPY}%</p>
-              <p className="text-sm text-muted-foreground">Liquidity APY</p>
+              <p className="text-3xl font-bold">
+                {mockData.mckbOutstanding}
+              </p>
+              <p className="text-sm text-muted-foreground">mCKB Outstanding</p>
             </div>
           </div>
         </section>
@@ -101,10 +107,10 @@ export default function CoMinePage() {
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Lock className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle>Stake Collateral</CardTitle>
+                  <CardTitle>Create a Schedule</CardTitle>
                   <CardDescription>
-                    Lock your CKB tokens as collateral to create mining
-                    offerings and mint mCKB tokens
+                    Mining providers and sponsors publish offerings or
+                    recruiting schedules with clear pricing.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -114,10 +120,10 @@ export default function CoMinePage() {
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Activity className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle>Mine CKB</CardTitle>
+                  <CardTitle>Mint mCKB</CardTitle>
                   <CardDescription>
-                    Participate in Nervos mining pools and earn block rewards
-                    while your collateral remains locked
+                    Sponsors mint mining contract tokens against miner debt and
+                    earn future mining yields.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -127,10 +133,10 @@ export default function CoMinePage() {
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <DollarSign className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle>Use mCKB</CardTitle>
+                  <CardTitle>Redeem by Queue</CardTitle>
                   <CardDescription>
-                    Trade or use your mCKB tokens while continuing to earn
-                    mining rewards on your collateral
+                    Redeem mCKB 1:1 for collateral through time-based options
+                    and ICR-prioritised redemption queues.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -140,10 +146,10 @@ export default function CoMinePage() {
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <TrendingUp className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle>Redeem or Provide Liquidity</CardTitle>
+                  <CardTitle>Treasury Safeguards</CardTitle>
                   <CardDescription>
-                    Redeem mCKB for collateral anytime, or earn fees by
-                    providing liquidity to the protocol
+                    Liquidation and treasury mechanisms protect solvency while
+                    funding protocol sustainability.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -156,7 +162,7 @@ export default function CoMinePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h3 className="text-3xl font-bold mb-6">
-                Built for Security and Efficiency
+                Built for Collective Mining
               </h3>
               <div className="space-y-6">
                 <div className="flex gap-4">
@@ -165,11 +171,11 @@ export default function CoMinePage() {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">
-                      Collateralized Debt Positions
+                      Mining Offering & Recruiting
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      Every mCKB token is backed by over-collateralized CKB with
-                      a minimum 150% collateral ratio
+                      Publish schedules with explicit pricing, immediate funding,
+                      and clear debt obligations for mining providers.
                     </p>
                   </div>
                 </div>
@@ -181,8 +187,8 @@ export default function CoMinePage() {
                   <div>
                     <h4 className="font-semibold mb-1">Flexible Redemption</h4>
                     <p className="text-sm text-muted-foreground">
-                      Choose your redemption speed from instant to 28 days with
-                      varying fee structures
+                      Choose between instant and longer settlement windows with
+                      transparent fee schedules.
                     </p>
                   </div>
                 </div>
@@ -193,11 +199,11 @@ export default function CoMinePage() {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">
-                      Earn Multiple Yield Streams
+                      Recovery Mode Guardrails
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      Mining rewards, liquidation bonuses, redemption fees, and
-                      protocol token incentives
+                      CCR and LCR thresholds enforce partial and full liquidation
+                      to protect solvency.
                     </p>
                   </div>
                 </div>
@@ -207,7 +213,7 @@ export default function CoMinePage() {
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <CardHeader>
                 <CardTitle>Protocol Treasury Health</CardTitle>
-                <CardDescription>Real-time protocol metrics</CardDescription>
+                <CardDescription>Collateral and redemption status</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -220,28 +226,27 @@ export default function CoMinePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    Protocol Mode
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className="bg-green-500/10 text-green-600 border-green-500/20"
-                  >
-                    Normal Operations
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    Liquidity Pool Size
+                    Treasury Reserve
                   </span>
                   <span className="text-lg font-semibold">
-                    {mockData.tvl} CKB
+                    {mockData.treasuryReserve} CKB
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    24h Mining Volume
+                    Outstanding mCKB
                   </span>
-                  <span className="text-lg font-semibold">2,847 CKB</span>
+                  <span className="text-lg font-semibold">
+                    {mockData.mckbOutstanding}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Stability Pool APY (M2)
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {mockData.liquidityAPY}%
+                  </span>
                 </div>
                 <Button className="w-full mt-4" asChild>
                   <Link href="/treasury">View Full Treasury Dashboard</Link>
@@ -254,17 +259,19 @@ export default function CoMinePage() {
         {/* CTA Section */}
         <section className="bg-muted/30 py-20">
           <div className="container mx-auto px-4 text-center">
-            <h3 className="text-3xl font-bold mb-6">Ready to Start Mining?</h3>
+            <h3 className="text-3xl font-bold mb-6">
+              Ready to Publish a Mining Schedule?
+            </h3>
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-              Join thousands of CKB holders who are earning mining rewards while
-              maintaining liquidity through CoMine
+              Create a mining offering or join a recruiting schedule to access
+              liquidity and future mining yields.
             </p>
             <div className="flex items-center justify-center gap-4">
               <Button size="lg" asChild>
-                <Link href="/mining">Start Mining</Link>
+                <Link href="/mining">Launch Mining Schedule</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/treasury">View Treasury</Link>
+                <Link href="/docs">Explore Protocol Docs</Link>
               </Button>
             </div>
           </div>

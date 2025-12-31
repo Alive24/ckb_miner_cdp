@@ -1,100 +1,85 @@
 # CoMine Protocol
 
-Combine CKB mining and collateralised debt positions (CDPs) to implement decentralised and tokenised mining for the community and mining-specific DeFi services.
-
-Mining providers (operators of mining machine) monetise future mining capacity at a discount reflecting time preference and risk. Mining sponsors (buyers) provide immediate capital and tolerance for time cost for future mining yields and exposure without infrastructure investment, necessary expertise, or operational burden.
+CoMine combines CKB mining with collateralised debt positions (CDPs) to enable decentralised, tokenised mining for the community. Mining providers (operators of mining machines) monetise future mining capacity at a discount that reflects time preference and risk. Mining sponsors (buyers) provide immediate capital and accept time cost for future mining yields and exposure without infrastructure, expertise, or operational burden.
 
 ## Overview
 
 ### Initiatives
 
-- Decentralisation: Mining, Speculating, Leveraging, Settlement;
-- Community: Open-source; Serverless; Fund DAO; Price stabilisation; Adoption of iCKB;
-- Mining-Specific DeFi: Tradable Mining Contract Token (mCKB), Mining Offering, Mining Recruiting; Over-collateralisation for Risk Mitigation and solvency with Liquidation, Redemption, (M2) Stability Pool
+- Decentralisation: Mining, speculation, leverage, and settlement.
+- Community: Open-source, serverless, DAO funding, price stabilisation, adoption of iCKB.
+- Mining-Specific DeFi: Tradable mining contract tokens (mCKB), mining offering, mining recruiting; over-collateralisation for risk mitigation and solvency with liquidation, redemption, and (M2) stability pool.
 
-### Collective Mining: Tokenised and decentralised
+### Collective Mining: Tokenised and Decentralised
 
-- Collective mining instead of single miner and a single investor; Decouple mining provider and mining sponsor, offering and recruiting;
-- Incentivization:
-  - Waive fee for miners mining directly to protocol pool, and miners with specific attributes;
-  - (M2) Protocol token rewards for miners with specific attributes;
+- Collective mining instead of a single miner and a single investor; decouple mining provider and mining sponsor through offering and recruiting.
+- Incentivisation:
+  - Waive fees for miners who mine directly to the protocol pool, and miners with specific attributes.
+  - (M2) Protocol token rewards for miners with specific attributes.
 
 ### Permanent Community Infrastructure
 
-- Decentralization:
-  - Should keep operating automatically even if no further development is ongoing;
-  - Does not rely on dedicated server; runs on any serverless functions provider;
-  - No admin is required.
-  - Does not require initial funding
+- Decentralisation:
+  - Operates automatically even without ongoing development.
+  - Does not rely on a dedicated server; runs on any serverless functions provider.
+  - Requires no admin and no initial funding.
 - Public Interests:
-  - Buffer for price stabilisation
-  - Promote usage of iCKB
-  - Fund DAO
+  - Buffer for price stabilisation.
+  - Promote usage of iCKB.
+  - Fund a sustainable DAO.
 
 ## Core Modules
 
 ### Roles
 
 - User Roles:
-  - Miner: Owners/operators of physical mining machine that provides tokenised mining services by minting mCKB to mining sponsors against new debt which MP repays in the future.
-  - Sponsor: Participants that engage in tokenised mining by minting mining contract token from MP with immediate funding.
-  - Redeemer: Holders of mCKB that redeems mCKB for CKB 1:1.
-  - (M2) Liquidity Provider: Stake liquidity to help treasury with solvency and mitigate risks for rewards in liquidation and redemption.
+  - Miner: Owners/operators of physical mining machines who mint mCKB to sponsors against new debt that they repay in the future.
+  - Sponsor: Participants who engage in tokenised mining by minting mining contract tokens from miners with immediate funding.
+  - Redeemer: Holders of mCKB who redeem mCKB for CKB 1:1.
+  - (M2) Liquidity Provider: Stake liquidity to help the treasury with solvency and mitigate risks for liquidation and redemption rewards.
 - Protocol Roles:
-  - Treasury: A public actor in the protocol that mitigates solvency risks and yields protocol revenue for the purpose of building an independent and self-sustainable DAO;
-  - Redeemee: Mining providers with lowest ICR below CCR. If all ICR are above CCR, treasury would be the redeemee proportionally.
-  - (M2) Liquidator: Liquidity providers that participated and earn extra rewards in a successful liquidation. Treasury would participate proportionally.
+  - Treasury: A public actor that mitigates solvency risks and yields protocol revenue to build an independent, self-sustainable DAO.
+  - Redeemee: Mining providers with the lowest ICR below CCR. If all ICR are above CCR, treasury is the redeemee proportionally.
+  - (M2) Liquidator: Liquidity providers who participate and earn extra rewards in successful liquidation. Treasury participates proportionally.
 
 ### Mechanism
 
-- Mining Schedule
-  - Mining Offering: A mining schedule proposal by miners with a price (either in CKB or stable coin) for any sponsor to mint mCKB against the miner’s debt.
-  - Mining Recruiting: A mining schedule proposal by sponsors with a price (either in CKB or stable coin) for any miner to mint mCKB against their own debt.
-  - Deposit / Debt / Repay: Miner needs to deposit collaterals against their debt (nominated by mCKB 1:1 to the amount the miner minted) and maintain a healthy ICR by either depositing more collaterals or repay debt with CKB.
-- Collateral Ratio
-  - Individual Collateral Ratio: The ratio of collateral to debt for any individual miner
-  - Healthy Collateral Ratio: The standard for ICR to be healthy (M2) and earn protocol token
-  - Total Collateral Ratio: The collective ratio of all collaterals and assets to all debt for the whole protocol.
-  - Critical Collateral Ratio: The standard for ICR and TCR to be deemed as critical and in recovery mode. In recovery mode, any actions that would further lower ICR (for individual miners) or TCR (global) would be prohibited; partial liquidation would happen daily, and additional interest rate would apply until miner gets out of recovery mode by raising their ICR above CCR.
-  - Liquidation Collateral Ratio: The bottom line for ICR under which the mining schedule would be fully liquidated; all collaterals and debt would be transferred to the treasury together with the liquidation reserve;
-- Redemption: Holders of mCKB can redeem for collaterals deposited in the protocol 1:1 after 30 days. As redemption happens, mCKB would be burned and the same amount of debt would be removed.
-- Liquidation: An automated procedure to ensure solvency that repays debt with the deposited collaterals for miners with ICR lower than CCR. This would partially restore unhealthy ICR but full liquidation would happen if ICR drops below LCR to ensure solvency.
-- Treasury: A public actor to receive collaterals and debt from miners when they repay or get liquidated.
+- Mining Schedule:
+  - Mining Offering: A mining schedule proposal by miners with a price (CKB or stable coin) for sponsors to mint mCKB against the miner’s debt.
+  - Mining Recruiting: A mining schedule proposal by sponsors with a price (CKB or stable coin) for miners to mint mCKB against their own debt.
+  - Deposit / Debt / Repay: Miners deposit collateral against their debt (mCKB minted 1:1) and maintain a healthy ICR by adding collateral or repaying debt with CKB.
+- Collateral Ratio:
+  - Individual Collateral Ratio (ICR): The ratio of collateral to debt for any individual miner.
+  - Healthy Collateral Ratio: The standard for ICR to be healthy (M2) and earn protocol tokens.
+  - Total Collateral Ratio (TCR): The ratio of all collateral and assets to all debt for the protocol.
+  - Critical Collateral Ratio (CCR): Threshold for recovery mode. In recovery mode, actions that lower ICR (individual) or TCR (global) are prohibited; partial liquidation occurs daily and additional interest applies until ICR rises above CCR.
+  - Liquidation Collateral Ratio (LCR): The bottom line for ICR under which a mining schedule is fully liquidated and collateral plus debt are transferred to the treasury with the liquidation reserve.
+- Redemption: Holders of mCKB redeem for protocol collateral 1:1 after 30 days (by default; faster options available with fee). mCKB is burned and the same amount of debt is removed.
+- Liquidation: An automated procedure that repays debt with deposited collateral for miners with ICR below CCR. Partial liquidation restores unhealthy ICR; full liquidation happens if ICR drops below LCR.
+- Treasury: Receives collateral and debt from miners when they repay or get liquidated.
 - (M2) Staking
-- (M3) Multicollateralization
+- (M3) Multicollateralisation
 
 ### Tokens
 
-- Mining Contract Token (e.g. mCKB): MS Mint against MP’s debt 1:1 at a MP’s price; can redeem MP’s collaterals and then treasury’s assets 1:1.
-- (M2) Protocol Token: Earn by keeping a healthy ICR, staking for stability pool or trading pool.
+- Mining Contract Token (mCKB): Minted by sponsors against miner debt 1:1 at the miner’s price; redeemable for miner collateral and treasury assets 1:1.
+- (M2) Protocol Token: Earned by keeping a healthy ICR, staking to the stability pool, or trading pools.
   - Tradable
   - Fee waiver
   - Voting for key parameters
 
-Each milestone provides complete functionality for the version.
+Each milestone provides complete functionality for its version.
 
-## Milestone 1: Collective Mining
+## Milestones
 
-[Milestone 1: Collective Mining](CDP%20Mining/Milestone%201%20Collective%20Mining%202d4a70a7fe4880f38050d5cc6bdae087.md)
+- [Collective Mining (M1)](./Collective%20Mining%20%28M1%29)
+- [Stability Pool and Protocol Token (M2)](./Stability%20Pool%20and%20Protocol%20Token%20%28M2%29)
+- [Milestone 3: Multicollateral Support](./Roadmaps/Milestone%203%20Multicollateral%20Support)
+- [Milestone 4: Multi-assets Mining](./Roadmaps/Milestone%204%20Multi-assets%20Mining)
 
-## Milestone 2: Stability Pool and Protocol Token
+## Roles and Notes
 
-[Milestone 2: Stability Pool and Protocol Token](CDP%20Mining/Milestone%202%20Stability%20Pool%20and%20Protocol%20Token%202d4a70a7fe488032bb23c652afd2ad9b.md)
-
-## Milestone 3: Multicollateral Support
-
-[Milestone 3: Multicollateral Support](CDP%20Mining/Milestone%203%20Multicollateral%20Support%202d8a70a7fe4880f8b686c13ab88d2afe.md)
-
-## Milestone 4: Multi-assets Mining
-
-[Milestone 4: Multi-assets Mining](CDP%20Mining/Milestone%204%20Multi-assets%20Mining%202d8a70a7fe488070ab70d55e8b9376bc.md)
-
-Miscellaneous
-
-[User Role: Miner](CDP%20Mining/User%20Role%20Miner%202d9a70a7fe48809189e9e7967fca89e9.md)
-
-[User Role: Sponsor](CDP%20Mining/User%20Role%20Sponsor%202d9a70a7fe48803bbba9ff2ee0346624.md)
-
-[Protocol Role: Treasury](CDP%20Mining/Protocol%20Role%20Treasury%202d9a70a7fe4880329111d859b43d230b.md)
-
-[Sparse Notes](CDP%20Mining/Sparse%20Notes%202d9a70a7fe4880ba92e4ddc49f53c7a1.md)
+- [User Role: Miner](./User%20Roles/Miner)
+- [User Role: Sponsor](./User%20Roles/Sponsor)
+- [Protocol Role: Treasury](./Protocol%20Roles/Treasury)
+- [Sparse Notes](./Sparse%20Notes/Sparse%20Notes)

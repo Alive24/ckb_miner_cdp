@@ -18,7 +18,7 @@ export default function TreasuryPage() {
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Protocol Treasury</h2>
           <p className="text-muted-foreground">
-            Real-time health metrics and system status
+            Public solvency actor for liquidation, redemption, and protocol revenue
           </p>
         </div>
 
@@ -27,10 +27,10 @@ export default function TreasuryPage() {
           <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardHeader className="pb-3">
               <CardDescription className="text-xs">
-                Total Value Locked
+                Total Collateral Locked
               </CardDescription>
               <CardTitle className="text-3xl font-bold tracking-tight">
-                $24.8M
+                24.8M CKB
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -53,7 +53,7 @@ export default function TreasuryPage() {
             <CardContent>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Activity className="h-4 w-4" />
-                <span>1,247 active contracts</span>
+                <span>1,247 active schedules</span>
               </div>
             </CardContent>
           </Card>
@@ -76,7 +76,7 @@ export default function TreasuryPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardDescription className="text-xs">
-                Protocol Mode
+                Recovery Mode
               </CardDescription>
               <CardTitle className="text-xl font-bold tracking-tight">
                 Normal
@@ -88,7 +88,7 @@ export default function TreasuryPage() {
                 className="gap-1 bg-green-500/10 text-green-600 border-green-500/20"
               >
                 <Shield className="h-3 w-3" />
-                All Systems Operational
+                TCR above CCR
               </Badge>
             </CardContent>
           </Card>
@@ -190,13 +190,13 @@ export default function TreasuryPage() {
                       time: "2 min ago",
                     },
                     {
-                      type: "Redemption",
+                      type: "Mining Recruiting",
                       user: "0x9f2e...1a5b",
                       amount: "2,500 mCKB",
                       time: "8 min ago",
                     },
                     {
-                      type: "Liquidity Added",
+                      type: "Redemption",
                       user: "0x4c6d...8e2f",
                       amount: "10,000 CKB",
                       time: "15 min ago",
@@ -208,7 +208,7 @@ export default function TreasuryPage() {
                       time: "32 min ago",
                     },
                     {
-                      type: "Mining Offering",
+                      type: "Repayment",
                       user: "0x5e7f...2a4b",
                       amount: "7,500 CKB",
                       time: "1 hour ago",
@@ -250,34 +250,34 @@ export default function TreasuryPage() {
             {/* Mining Statistics */}
             <Card>
               <CardHeader>
-                <CardTitle>Mining Statistics</CardTitle>
-                <CardDescription>CKB mining performance</CardDescription>
+                <CardTitle>Treasury Flows</CardTitle>
+                <CardDescription>Daily protocol operations</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg bg-muted">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Total Blocks Mined
+                      Redemptions Settled
                     </p>
-                    <p className="text-2xl font-bold">12,847</p>
+                    <p className="text-2xl font-bold">12,847 mCKB</p>
                   </div>
                   <div className="p-4 rounded-lg bg-muted">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Total Mining Rewards
+                      Liquidations Executed
                     </p>
-                    <p className="text-2xl font-bold">3.2M CKB</p>
+                    <p className="text-2xl font-bold">248</p>
                   </div>
                   <div className="p-4 rounded-lg bg-muted">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Avg Block Time
+                      Treasury Revenue (24h)
                     </p>
-                    <p className="text-2xl font-bold">36s</p>
+                    <p className="text-2xl font-bold">18,450 CKB</p>
                   </div>
                   <div className="p-4 rounded-lg bg-muted">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Network Hashrate
+                      Recovery Mode Entries
                     </p>
-                    <p className="text-2xl font-bold">145 TH/s</p>
+                    <p className="text-2xl font-bold">3</p>
                   </div>
                 </div>
               </CardContent>
@@ -314,7 +314,7 @@ export default function TreasuryPage() {
                     variant="outline"
                     className="bg-green-500/10 text-green-600 border-green-500/20"
                   >
-                    Sufficient
+                    Stability Pool Ready
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
@@ -352,15 +352,8 @@ export default function TreasuryPage() {
               <CardContent className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Minimum ICR</span>
-                    <span className="font-medium">150%</span>
-                  </div>
-                  <Progress value={100} className="h-2" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
                     <span className="text-muted-foreground">
-                      Critical CR (Recovery Mode)
+                      Liquidation Collateral Ratio (LCR)
                     </span>
                     <span className="font-medium">150%</span>
                   </div>
@@ -369,7 +362,16 @@ export default function TreasuryPage() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-muted-foreground">
-                      Current TCR vs Critical
+                      Critical Collateral Ratio (CCR)
+                    </span>
+                    <span className="font-medium">150%</span>
+                  </div>
+                  <Progress value={100} className="h-2" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-muted-foreground">
+                      Current TCR vs CCR
                     </span>
                     <span className="font-medium text-green-600">+17%</span>
                   </div>
@@ -396,7 +398,7 @@ export default function TreasuryPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    mCKB Stability Pool
+                    Stability Pool (M2)
                   </span>
                   <span className="text-sm font-medium">1.8M mCKB</span>
                 </div>
@@ -410,9 +412,9 @@ export default function TreasuryPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    NVT Circulating
+                    Protocol Token (M2)
                   </span>
-                  <span className="text-sm font-medium">2.5M NVT</span>
+                  <span className="text-sm font-medium">2.5M</span>
                 </div>
               </CardContent>
             </Card>
