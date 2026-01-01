@@ -28,7 +28,7 @@ export default function RedemptionPage() {
     { time: "1 Day", fee: "1.0%", days: 1, description: "Wait 1 day" },
     { time: "7 Days", fee: "0.5%", days: 7, description: "Wait 1 week" },
     { time: "14 Days", fee: "0.3%", days: 14, description: "Wait 2 weeks" },
-    { time: "28 Days", fee: "0.2%", days: 28, description: "Lowest fee" },
+    { time: "28 Days", fee: "0%", days: 28, description: "No fee" },
   ];
 
   return (
@@ -37,7 +37,8 @@ export default function RedemptionPage() {
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Redeem mCKB</h2>
           <p className="text-muted-foreground">
-            Exchange mCKB for protocol collateral with multiple settlement windows
+            Exchange mCKB for protocol collateral with multiple settlement
+            windows
           </p>
         </div>
 

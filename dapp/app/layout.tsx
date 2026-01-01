@@ -24,7 +24,7 @@ const navbar = (
           <Zap className="h-5 w-5 text-primary-foreground" />
         </div>
         <span
-          style={{ marginLeft: ".5em", fontWeight: 800, fontSize: "1.25rem" }}
+          style={{ marginLeft: ".5em", fontWeight: 800, fontSize: "1.5rem" }}
         >
           CoMine
         </span>
@@ -51,13 +51,13 @@ const navbar = (
           href="/liquidity"
           className="text-sm hover:text-primary transition-colors"
         >
-          Stability Pool
+          Liquidity
         </Link>
         <Link
           href="/treasury"
           className="text-sm hover:text-primary transition-colors"
         >
-          Treasury
+          Statistics
         </Link>
       </nav>
       <Link

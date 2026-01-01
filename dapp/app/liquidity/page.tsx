@@ -21,7 +21,7 @@ export default function LiquidityPage() {
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Stability Pool (M2)</h2>
+          <h2 className="text-3xl font-bold mb-2">Liquidity (M2)</h2>
           <p className="text-muted-foreground">
             Provide stability liquidity to support redemptions and liquidations,
             and earn protocol rewards.
@@ -56,7 +56,9 @@ export default function LiquidityPage() {
                 <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Estimated Returns (M2)</span>
+                    <span className="font-semibold">
+                      Estimated Returns (M2)
+                    </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>

@@ -16,13 +16,13 @@ export default function TreasuryPage() {
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Protocol Treasury</h2>
+          <h2 className="text-3xl font-bold mb-2">Protocol Statistics</h2>
           <p className="text-muted-foreground">
-            Public solvency actor for liquidation, redemption, and protocol revenue
+            Treasury, miner activity, and system-wide health metrics
           </p>
         </div>
 
-        {/* Protocol Health Overview */}
+        {/* Protocol Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardHeader className="pb-3">
@@ -44,16 +44,16 @@ export default function TreasuryPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardDescription className="text-xs">
-                Total mCKB Debt
+                Active Mining Schedules
               </CardDescription>
               <CardTitle className="text-3xl font-bold tracking-tight">
-                18.6M
+                1,247
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Activity className="h-4 w-4" />
-                <span>1,247 active schedules</span>
+                <span>18.6M mCKB outstanding</span>
               </div>
             </CardContent>
           </Card>
@@ -76,7 +76,7 @@ export default function TreasuryPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardDescription className="text-xs">
-                Recovery Mode
+                Treasury Solvency
               </CardDescription>
               <CardTitle className="text-xl font-bold tracking-tight">
                 Normal
@@ -95,8 +95,42 @@ export default function TreasuryPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Detailed Stats */}
+          {/* Left Column - Protocol & Miner Stats */}
           <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Miner Activity</CardTitle>
+                <CardDescription>Registered mining providers</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Active Miners
+                    </p>
+                    <p className="text-2xl font-bold">3,456</p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      New Registrations (7d)
+                    </p>
+                    <p className="text-2xl font-bold">182</p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Avg ICR
+                    </p>
+                    <p className="text-2xl font-bold">187%</p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Recovery Mode Miners
+                    </p>
+                    <p className="text-2xl font-bold">38</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             {/* Collateral Distribution */}
             <Card>
               <CardHeader>
@@ -247,11 +281,11 @@ export default function TreasuryPage() {
               </CardContent>
             </Card>
 
-            {/* Mining Statistics */}
+            {/* Protocol Flows */}
             <Card>
               <CardHeader>
-                <CardTitle>Treasury Flows</CardTitle>
-                <CardDescription>Daily protocol operations</CardDescription>
+                <CardTitle>Protocol Flows</CardTitle>
+                <CardDescription>Treasury and system activity</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
@@ -398,7 +432,7 @@ export default function TreasuryPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    Stability Pool (M2)
+                    Liquidity (M2)
                   </span>
                   <span className="text-sm font-medium">1.8M mCKB</span>
                 </div>
