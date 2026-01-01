@@ -35,7 +35,7 @@ Milestone 1.4: Collateral Ratio and Liquidation
 - Balance based perpetual contract.
 - Different tiers of fee: Different 0 interest span and different penalty rate.
 
-### **Redemption**
+### Redemption
 
 - Holders of mining contract tokens can redeem them for the CKB 1:1 for the collaterals in the protocol pool;
 - Redemption can take different time length (instant, 1 day, 7 days, 14 days, 28 days) at different fee rate
@@ -43,7 +43,7 @@ Milestone 1.4: Collateral Ratio and Liquidation
 - Redemption targets are selected based on their ICR;
   - (Milestone 2): Mining providers can set an additional interest rate to move further back in the redemption queue.
 
-### **Individual Collateral Ratio Management and Liquidation**
+### Individual Collateral Ratio Management and Liquidation
 
 - At any time, mining providers are obliged to maintain a healthy ICR or the collaterals will be liquidated; to do so, mining providers can stake more collaterals or repay debts; you can use mCKB or CKB to repay at 1% fee or directly mine to the protocol. By mining directly to repay or collateral, you enjoy a 0% fee.
 - Recovery Mode

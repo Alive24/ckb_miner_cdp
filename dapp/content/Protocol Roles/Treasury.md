@@ -1,1 +1,1 @@
-# Protocol Role: Treasury
+# Treasury
