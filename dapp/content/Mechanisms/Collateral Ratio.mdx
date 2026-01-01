@@ -1,0 +1,8 @@
+# Collateral Ratio
+
+- At any time, mining providers are obliged to maintain a healthy ICR or the collaterals will be liquidated; to do so, mining providers can stake more collaterals or repay debts; you can use mCKB or CKB to repay at 1% fee or directly mine to the protocol. By mining directly to repay or collateral, you enjoy a 0% fee.
+- Recovery Mode
+  - Mining Provider in Recovery Mode: When ICR < CCR, the mining provider will be put into recovery mode;
+  - Global Recovery Mode: `Total Collateralization Ratio` may fall below `Critical Collateralization Ratio`. When TCR < CCR, the protocol will enter global recovery mode;
+  - In recovery mode, actions that would lower ICR (For single mining provider in recovery mode) / TCR (For global recovery mode) will be blocked;
+  - Would be redeemee before treasury.

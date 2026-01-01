@@ -1,11 +1,11 @@
-# Milestone 2: Stability Pool and Protocol Token
+# Milestone 2: Stability Pool and $COMINE
 
 ## Overview
 
 In Milestone 2, on the basis of Milestone 1, we will implement the following modules:
 
 - A dedicated stability pool to provide incentivised liquidity and solvency.
-- A tradable Protocol Token that works as fee waiver;
+- A tradable $COMINE token that works as fee waiver;
 
 ## Stability Pool
 
@@ -13,13 +13,13 @@ In Milestone 2, on the basis of Milestone 1, we will implement the following mod
     - Liquidation
     - Redemption: Provide quicker redemption option
 
-## Protocol Token
+## $COMINE
 
 - To encourage:
     - Mine to Pool
     - Higher ICR
     - Staking to Stability Pool
-    - Staking to Protocol Token Pool
+    - Staking to $COMINE Pool
 - Can be used to waive one time fee in:
     - Mining Recruiting / Offering
     - Expedite Redemption
