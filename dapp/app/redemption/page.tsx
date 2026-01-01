@@ -262,8 +262,8 @@ export default function RedemptionPage() {
                   <div className="flex gap-2">
                     <span className="text-primary font-bold">•</span>
                     <p className="text-muted-foreground">
-                      <strong>Protocol Token (M2):</strong> Use protocol tokens
-                      to waive one-time redemption fees.
+                      <strong>$COMINE (M2):</strong> Use $COMINE to waive
+                      one-time redemption fees.
                     </p>
                   </div>
                 </div>

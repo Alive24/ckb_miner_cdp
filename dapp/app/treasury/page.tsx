@@ -446,7 +446,7 @@ export default function TreasuryPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    Protocol Token (M2)
+                    $COMINE (M2)
                   </span>
                   <span className="text-sm font-medium">2.5M</span>
                 </div>

@@ -48,10 +48,10 @@ const navbar = (
           Redemption
         </Link>
         <Link
-          href="/liquidity"
+          href="/earn"
           className="text-sm hover:text-primary transition-colors"
         >
-          Liquidity
+          Earn
         </Link>
         <Link
           href="/treasury"

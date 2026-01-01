@@ -147,6 +147,7 @@ export default function MiningPage() {
         price: "0.95 CKB",
         priceMode: "CKB absolute price",
         volume: "50,000",
+        fulfilled: "18,500",
         volumeMode: "Absolute volume",
         icr: "195%",
         status: "active",
@@ -158,6 +159,7 @@ export default function MiningPage() {
         price: "0.97 CKB",
         priceMode: "Stable coin, percentage offset",
         volume: "75,000",
+        fulfilled: "22,000",
         volumeMode: "Absolute volume",
         icr: "210%",
         status: "active",
@@ -169,6 +171,7 @@ export default function MiningPage() {
         price: "0.92 CKB",
         priceMode: "CKB absolute price",
         volume: "100,000",
+        fulfilled: "64,000",
         volumeMode: "Target ICR",
         icr: "185%",
         status: "active",
@@ -180,6 +183,7 @@ export default function MiningPage() {
         price: "0.92 CKB",
         priceMode: "CKB absolute price",
         volume: "35,000",
+        fulfilled: "12,500",
         volumeMode: "Absolute volume",
         icr: "192%",
         status: "active",
@@ -191,6 +195,7 @@ export default function MiningPage() {
         price: "0.98 CKB",
         priceMode: "CKB absolute price",
         volume: "25,000",
+        fulfilled: "6,200",
         volumeMode: "Absolute volume",
         icr: "200%",
         status: "active",
@@ -202,6 +207,7 @@ export default function MiningPage() {
         price: "0.94 CKB",
         priceMode: "Stable coin, absolute price",
         volume: "60,000",
+        fulfilled: "41,000",
         volumeMode: "Target ICR",
         icr: "188%",
         status: "active",
@@ -213,6 +219,7 @@ export default function MiningPage() {
         price: "0.94 CKB",
         priceMode: "Stable coin, absolute price",
         volume: "22,000",
+        fulfilled: "9,400",
         volumeMode: "Absolute volume",
         icr: "197%",
         status: "active",
@@ -230,6 +237,7 @@ export default function MiningPage() {
         price: "0.95 CKB",
         priceMode: "CKB absolute price",
         volume: "40,000",
+        fulfilled: "15,000",
         volumeMode: "Absolute volume",
         icr: "190%",
         status: "active",
@@ -241,6 +249,7 @@ export default function MiningPage() {
         price: "0.95 CKB",
         priceMode: "CKB absolute price",
         volume: "18,000",
+        fulfilled: "6,500",
         volumeMode: "Absolute volume",
         icr: "198%",
         status: "active",
@@ -252,6 +261,7 @@ export default function MiningPage() {
         price: "0.97 CKB",
         priceMode: "Stable coin, percentage offset",
         volume: "85,000",
+        fulfilled: "32,000",
         volumeMode: "Target ICR",
         icr: "205%",
         status: "active",
@@ -263,6 +273,7 @@ export default function MiningPage() {
         price: "0.97 CKB",
         priceMode: "Stable coin, percentage offset",
         volume: "26,000",
+        fulfilled: "9,800",
         volumeMode: "Absolute volume",
         icr: "201%",
         status: "active",
@@ -274,6 +285,7 @@ export default function MiningPage() {
         price: "0.92 CKB",
         priceMode: "CKB absolute price",
         volume: "60,000",
+        fulfilled: "24,500",
         volumeMode: "Absolute volume",
         icr: "175%",
         status: "active",
@@ -285,6 +297,7 @@ export default function MiningPage() {
         price: "0.98 CKB",
         priceMode: "Stable coin, absolute price",
         volume: "30,000",
+        fulfilled: "11,200",
         volumeMode: "Absolute volume",
         icr: "220%",
         status: "active",
@@ -327,24 +340,28 @@ export default function MiningPage() {
         volume: number;
         tokens: Set<string>;
         items: T[];
+        tokenKey: string;
       }
     >();
 
     list.forEach((item) => {
       const priceValue = parseNumber(item.price);
       const priceKey = priceValue.toFixed(2);
-      const group = groups.get(priceKey) ?? {
+      const tokenKey = [...item.tokens].sort().join("|");
+      const groupKey = `${priceKey}::${tokenKey}`;
+      const group = groups.get(groupKey) ?? {
         priceLabel: `${priceValue.toFixed(2)} CKB`,
         priceValue,
         volume: 0,
         tokens: new Set<string>(),
         items: [],
+        tokenKey,
       };
 
       group.volume += parseNumber(item.volume);
       item.tokens.forEach((token) => group.tokens.add(token));
       group.items.push(item);
-      groups.set(priceKey, group);
+      groups.set(groupKey, group);
     });
 
     return Array.from(groups.values()).sort(
@@ -683,7 +700,7 @@ export default function MiningPage() {
                   const isFullySelected =
                     group.volume > 0 && selectedGroupVolume === group.volume;
                   return (
-                    <Dialog key={group.priceLabel}>
+                    <Dialog key={`${group.priceLabel}-${group.tokenKey}`}>
                       <DialogTrigger asChild>
                         <div
                           className={`relative cursor-pointer overflow-hidden rounded-lg border p-3 transition-all ${
@@ -1059,7 +1076,7 @@ export default function MiningPage() {
                     ? (group.volume / totalRecruitingVolume) * 100
                     : 0;
                   return (
-                    <Dialog key={group.priceLabel}>
+                    <Dialog key={`${group.priceLabel}-${group.tokenKey}`}>
                       <DialogTrigger asChild>
                         <div
                           className={`relative cursor-pointer overflow-hidden rounded-lg border p-3 transition-all ${
@@ -1512,10 +1529,24 @@ export default function MiningPage() {
                           {formatUsd(priceToUsd(offer.price))}
                         </p>
                       )}
-                      <p className="text-xs text-muted-foreground">
-                        {offer.volume} mCKB total
-                      </p>
                     </div>
+                    <div className="text-right text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">
+                        {offer.fulfilled}
+                      </span>
+                      {" / "}
+                      {offer.volume} mCKB
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {offer.tokens.map((token) => (
+                      <Badge
+                        key={`offer-token-${offer.id}-${token}`}
+                        variant="secondary"
+                      >
+                        {token}
+                      </Badge>
+                    ))}
                   </div>
                   <div>
                     <div className="flex justify-between text-xs text-muted-foreground">
@@ -1687,10 +1718,24 @@ export default function MiningPage() {
                           {formatUsd(priceToUsd(recruiting.price))}
                         </p>
                       )}
-                      <p className="text-xs text-muted-foreground">
-                        {recruiting.volume} mCKB total
-                      </p>
                     </div>
+                    <div className="text-right text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">
+                        {recruiting.fulfilled}
+                      </span>
+                      {" / "}
+                      {recruiting.volume} mCKB
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {recruiting.tokens.map((token) => (
+                      <Badge
+                        key={`recruit-token-${recruiting.id}-${token}`}
+                        variant="secondary"
+                      >
+                        {token}
+                      </Badge>
+                    ))}
                   </div>
                   <div>
                     <div className="flex justify-between text-xs text-muted-foreground">

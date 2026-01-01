@@ -27,7 +27,7 @@ export default function CoMinePage() {
     collateralLocked: "24,856,432",
     activeSchedules: 1247,
     tcr: 167,
-    mckbOutstanding: "18.6M",
+    mckbSupply: "18.6M",
     treasuryReserve: "12.4M",
     liquidityAPY: "8.5",
   };
@@ -73,9 +73,7 @@ export default function CoMinePage() {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold">
-                {mockData.activeSchedules}
-              </p>
+              <p className="text-3xl font-bold">{mockData.activeSchedules}</p>
               <p className="text-sm text-muted-foreground">
                 Active Mining Schedules
               </p>
@@ -87,10 +85,8 @@ export default function CoMinePage() {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold">
-                {mockData.mckbOutstanding}
-              </p>
-              <p className="text-sm text-muted-foreground">mCKB Outstanding</p>
+              <p className="text-3xl font-bold">{mockData.mckbSupply}</p>
+              <p className="text-sm text-muted-foreground">mCKB Supply</p>
             </div>
           </div>
         </section>
@@ -174,8 +170,8 @@ export default function CoMinePage() {
                       Mining Offering & Recruiting
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      Publish schedules with explicit pricing, immediate funding,
-                      and clear debt obligations for mining providers.
+                      Publish schedules with explicit pricing, immediate
+                      funding, and clear debt obligations for mining providers.
                     </p>
                   </div>
                 </div>
@@ -202,8 +198,8 @@ export default function CoMinePage() {
                       Recovery Mode Guardrails
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      CCR and LCR thresholds enforce partial and full liquidation
-                      to protect solvency.
+                      CCR and LCR thresholds enforce partial and full
+                      liquidation to protect solvency.
                     </p>
                   </div>
                 </div>
@@ -213,7 +209,9 @@ export default function CoMinePage() {
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <CardHeader>
                 <CardTitle>Protocol Treasury Health</CardTitle>
-                <CardDescription>Collateral and redemption status</CardDescription>
+                <CardDescription>
+                  Collateral and redemption status
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -234,10 +232,10 @@ export default function CoMinePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
-                    Outstanding mCKB
+                    mCKB Supply
                   </span>
                   <span className="text-lg font-semibold">
-                    {mockData.mckbOutstanding}
+                    {mockData.mckbSupply}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
