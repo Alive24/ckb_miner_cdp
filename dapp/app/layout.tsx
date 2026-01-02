@@ -54,7 +54,7 @@ const navbar = (
           Earn
         </Link>
         <Link
-          href="/treasury"
+          href="/statistics"
           className="text-sm hover:text-primary transition-colors"
         >
           Statistics

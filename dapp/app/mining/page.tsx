@@ -45,9 +45,9 @@ const parseNumber = (value: string) =>
 const RepayOptions = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const options = [
-    { value: "7", label: "7 days", fee: "1.2%" },
-    { value: "14", label: "14 days", fee: "0.6%" },
-    { value: "30", label: "30 days", fee: "0.3%" },
+    { value: "7", label: "7 days", fee: "0.0%" },
+    { value: "14", label: "14 days", fee: "0.3%" },
+    { value: "30", label: "30 days", fee: "0.6%" },
   ];
 
   return (
@@ -82,7 +82,7 @@ export default function MiningPage() {
   const [offeringTarget, setOfferingTarget] = useState("");
   const [recruitingTarget, setRecruitingTarget] = useState("");
   const [offeringMaxPrice, setOfferingMaxPrice] = useState("");
-  const [recruitingMaxPrice, setRecruitingMaxPrice] = useState("");
+  const [recruitingMinPrice, setRecruitingMinPrice] = useState("");
   const [offeringSelectMode, setOfferingSelectMode] = useState<
     "volume" | "maxPrice"
   >("volume");
@@ -551,21 +551,21 @@ export default function MiningPage() {
       return;
     }
 
-    const maxPrice = parseNumber(recruitingMaxPrice);
-    if (!maxPrice) {
+    const minPrice = parseNumber(recruitingMinPrice);
+    if (!minPrice) {
       setSelectedRecruitingIds(new Set());
       return;
     }
     const nextSelection = new Set<number>();
     groupedRecruitings
-      .filter((group) => group.priceValue <= maxPrice)
+      .filter((group) => group.priceValue >= minPrice)
       .forEach((group) =>
         group.items.forEach((item) => nextSelection.add(item.id))
       );
     setSelectedRecruitingIds(nextSelection);
   }, [
     groupedRecruitings,
-    recruitingMaxPrice,
+    recruitingMinPrice,
     recruitingSelectMode,
     recruitingTarget,
   ]);
@@ -590,7 +590,7 @@ export default function MiningPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent">
+          <Card className="border-primary/20 from-primary/10 to-transparent">
             <CardHeader>
               <CardTitle>Lowest Price Mining Offerings</CardTitle>
               <CardDescription>
@@ -964,7 +964,7 @@ export default function MiningPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent">
+          <Card className="border-primary/20 from-primary/10 to-transparent">
             <CardHeader>
               <CardTitle>Highest Price Mining Recruitings</CardTitle>
               <CardDescription>
@@ -1009,7 +1009,7 @@ export default function MiningPage() {
                           Select by total volume
                         </SelectItem>
                         <SelectItem value="maxPrice">
-                          Select by maximum price
+                          Select by minimum price
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -1030,12 +1030,12 @@ export default function MiningPage() {
                       value={
                         recruitingSelectMode === "volume"
                           ? recruitingTarget
-                          : recruitingMaxPrice
+                          : recruitingMinPrice
                       }
                       onChange={(e) =>
                         recruitingSelectMode === "volume"
                           ? setRecruitingTarget(e.target.value)
-                          : setRecruitingMaxPrice(e.target.value)
+                          : setRecruitingMinPrice(e.target.value)
                       }
                     />
                   </div>
@@ -1811,10 +1811,6 @@ export default function MiningPage() {
                                 </SelectItem>
                               </SelectContent>
                             </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Expected Day of Repay</Label>
-                            <RepayOptions />
                           </div>
                         </div>
                         <Button className="w-full">Save Changes</Button>

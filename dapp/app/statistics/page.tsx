@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Activity, Shield, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-export default function TreasuryPage() {
+export default function StatisticsPage() {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
@@ -499,3 +499,4 @@ export default function TreasuryPage() {
     </div>
   );
 }
+

@@ -247,7 +247,7 @@ export default function CoMinePage() {
                   </span>
                 </div>
                 <Button className="w-full mt-4" asChild>
-                  <Link href="/treasury">View Full Treasury Dashboard</Link>
+                  <Link href="/statistics">View Full Statistics Dashboard</Link>
                 </Button>
               </CardContent>
             </Card>
