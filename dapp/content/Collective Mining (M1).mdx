@@ -17,22 +17,22 @@ import { Callout } from 'nextra/components'
 
 ## Overview
 
-In CoMine, collective mining for CKB means that it:
+With CoMine, we transformed mining to be:
+- **Collective**: Miners and Sponsors only interact with the protocol and do not need to know each other;
+- **Anonymous & Tokenized**: Sponsors mint tradeable and fungible tokens (mCKB) against miners' debt 1:1 and redeem for target assets (CKB) 1:1;
+- **Collateralized**: Redemption is backed by the whole protocol collectively instead of the actual miner;
+- **Financialised**: Miners are able to fine control risk and exposure, speculate, leverage, and liquidity;
+- **Incentivised**: By adjusting fee rates and issuing $COMINE, the protocol can incentivise miners with specific attributes (e.g. smaller size, different locations, different mining machines) to increase miner decentralisation.
 
-1. Tokenise mining into offering and recruiting;
-2. Split mining rewards into sponsoring and redeeming thus anonymous/collective ;
-3. Allow early settlement before actual rewards for liquidity and speculation;
-4. Promise solvency and yield protocol revenue with liquidation and redemption by treasury;
-
-
+## Mechanisms
 
 ### Mining Schedules: Mining Offering / Mining Recruiting
 
 Mining schedules enable two-way tokenization of mining through **Mining Offering** and **Mining Recruiting**:
 
-- **Mining Offering**: Miners register with collaterals and propose offerings at their own price and volume. Sponsors accept and pay immediately, receiving mCKB tokens while the provider receives payment and incurs debt (1:1 CKB to mCKB).
+- **Mining Offering**: Miners register with collaterals deposits and propose offerings at their own price and volume. Sponsors accept and pay immediately, receiving mCKB tokens while the miner receives payment and incurs debt (1:1 CKB to mCKB) to the miner.
 
-- **Mining Recruiting**: Sponsors propose recruiting opportunities with funding. Providers accept and receive funding immediately, while sponsors receive mCKB tokens and the provider incurs debt.
+- **Mining Recruiting**: Sponsors propose recruiting with funding. Miners accept and receive funding immediately, while sponsors receive mCKB tokens and the miner incurs debt.
 
 Both mechanisms require miners to maintain a healthy Individual Collateral Ratio (ICR) to avoid liquidation. 
 
@@ -40,7 +40,7 @@ See [Mining Schedule](./Mechanisms/Mining%20Schedule) for detailed information.
 
 ### Redemption
 
-Holders of mCKB tokens can redeem them for CKB at a 1:1 ratio from the protocol pool. Redemption takes 30 days by default without additional fee while quicker options (instant, 1 day, 7 days, 14 days) with varying fee rates are also available.
+Holders of mCKB tokens can redeem them for CKB at a 1:1 ratio from the protocol pool. Redemption takes 30 days by default without additional fee while quicker options (instant, 1 day, 7 days, 14 days, 30 days) with varying fee rates are also available.
 
 See [Redemption](./Mechanisms/Redemption) for detailed information.
 

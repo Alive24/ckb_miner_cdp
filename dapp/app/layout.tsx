@@ -59,6 +59,12 @@ const navbar = (
         >
           Statistics
         </Link>
+        <Link
+          href="/simulator"
+          className="text-sm hover:text-primary transition-colors"
+        >
+          Simulator
+        </Link>
       </nav>
       <Link
         href="/docs"
