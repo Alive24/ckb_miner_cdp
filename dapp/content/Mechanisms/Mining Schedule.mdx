@@ -1,8 +1,38 @@
 # Mining Schedules
 
 
-## Mining Offering / Mining Recruiting
+## Mining Offering
+```mermaid
+sequenceDiagram
+    participant Miner as Miner
+    participant Protocol as Protocol
+    participant Sponsor as Sponsor
 
+    Note over Miner,Sponsor: Mining Offering Flow
+    Miner->>Protocol: 1. Register & Deposit Collaterals
+    Miner->>Protocol: 2. Propose Mining Offering <br/>with Price and Volume
+    Sponsor->>Protocol: 3. Accept Offering & Pay
+    Protocol->>Miner: 4. Receive Payment Immediately
+    Protocol->>Sponsor: 5. Mint mCKB Tokens Immediately
+    Protocol->>Miner: 6. Record Debt 1:1 (CKB to mCKB)
+    Miner->>Protocol: 7. Maintain ICR by <br/> adding collaterals or repaying debt
+```
+
+## Mining Recruiting
+```mermaid
+sequenceDiagram
+    participant Miner as Miner
+    participant Protocol as Protocol
+    participant Sponsor as Sponsor
+
+    Note over Miner,Sponsor: Mining Recruiting Flow
+    Sponsor->>Protocol: 1. Propose Mining Recruiting <br/>with Price, Volume, and Funding
+    Miner->>Protocol: 2. Accept Recruiting
+    Protocol->>Miner: 3. Receive Funding Immediately
+    Protocol->>Sponsor: 4. Mint mCKB Tokens Immediately
+    Protocol->>Miner: 5. Record Debt 1:1 (CKB to mCKB)
+    Miner->>Protocol: 6. Maintain ICR by <br/> adding collaterals or repaying debt
+```
 - Miners can register as mining providers by depositing collaterals and keeping a liquidation deposit;
 - After registration, mining provider can propose mining offering at its own price and volume to allow mining sponsors to mint mining contract tokens (e.g, mCKB):
   - Mining provider can set price in either CKB or stable coins against mCKB by absolute price or relative price;

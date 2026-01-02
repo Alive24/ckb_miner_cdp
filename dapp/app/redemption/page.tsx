@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -12,33 +12,70 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 import { ArrowDownRight, Clock } from "lucide-react";
 
 export default function RedemptionPage() {
   const [redeemAmount, setRedeemAmount] = useState("");
   const [selectedSpeed, setSelectedSpeed] = useState<string | null>(null);
 
+  const mCKBBalance = 2500;
+
   const redemptionOptions = [
     {
       time: "Instant",
-      fee: "2.0%",
+      fee: 2.0,
       days: 0,
       description: "Immediate settlement",
     },
-    { time: "1 Day", fee: "1.0%", days: 1, description: "Wait 1 day" },
-    { time: "7 Days", fee: "0.5%", days: 7, description: "Wait 1 week" },
-    { time: "14 Days", fee: "0.3%", days: 14, description: "Wait 2 weeks" },
-    { time: "28 Days", fee: "0%", days: 28, description: "No fee" },
+    { time: "1 Day", fee: 1.0, days: 1, description: "Wait 1 day" },
+    { time: "7 Days", fee: 0.5, days: 7, description: "Wait 1 week" },
+    { time: "14 Days", fee: 0.3, days: 14, description: "Wait 2 weeks" },
+    { time: "30 Days", fee: 0, days: 30, description: "No fee" },
   ];
+
+  // Calculate redemption summary based on amount and selected speed
+  const redemptionSummary = useMemo(() => {
+    const amount = Number(redeemAmount || 0);
+    if (!amount || !selectedSpeed) {
+      return {
+        receive: 0,
+        fee: 0,
+        feePercent: 0,
+        availableAfter: null,
+      };
+    }
+
+    const option = redemptionOptions.find((o) => o.time === selectedSpeed);
+    if (!option) {
+      return {
+        receive: 0,
+        fee: 0,
+        feePercent: 0,
+        availableAfter: null,
+      };
+    }
+
+    const fee = (amount * option.fee) / 100;
+    const receive = amount - fee;
+    const availableAfter =
+      option.days > 0 ? new Date(Date.now() + option.days * 86400000) : null;
+
+    return {
+      receive,
+      fee,
+      feePercent: option.fee,
+      availableAfter,
+    };
+  }, [redeemAmount, selectedSpeed]);
 
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Redeem mCKB</h2>
+          <h2 className="text-3xl font-bold mb-2">Redemption</h2>
           <p className="text-muted-foreground">
-            Exchange mCKB for protocol collateral with multiple settlement
-            windows
+            Exchange mCKB 1:1 for CKB windows
           </p>
         </div>
 
@@ -53,44 +90,73 @@ export default function RedemptionPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="redeem">mCKB to Redeem</Label>
-                  <Input
-                    id="redeem"
-                    type="number"
-                    placeholder="0.00"
-                    value={redeemAmount}
-                    onChange={(e) => setRedeemAmount(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Balance: 2,500 mCKB
-                  </p>
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="redeem">mCKB to Redeem</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Balance: {mCKBBalance.toLocaleString()} mCKB
+                    </p>
+                  </div>
+                  <div className="space-y-2 px-1 relative">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span>{mCKBBalance.toLocaleString()}</span>
+                    </div>
+                    <div className="relative">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-2 w-24">
+                        <Input
+                          id="redeem"
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={redeemAmount}
+                          onChange={(e) => setRedeemAmount(e.target.value)}
+                          className="text-center px-2 py-1 text-sm h-8"
+                        />
+                      </div>
+                      <Slider
+                        value={[Number(redeemAmount || 0)]}
+                        onValueChange={(value) =>
+                          setRedeemAmount(value[0].toString())
+                        }
+                        min={0}
+                        max={mCKBBalance}
+                        step={Math.max(0.01, mCKBBalance / 100)}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span>{mCKBBalance.toLocaleString()}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
                   <Label>Redemption Speed</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {redemptionOptions.map((option) => (
                       <Button
                         key={option.time}
                         variant="outline"
-                        className={`h-auto flex-col items-start p-4 hover:border-primary ${
+                        className={`flex-1 min-w-[100px] h-auto py-3 ${
                           selectedSpeed === option.time
                             ? "border-primary bg-primary/5"
                             : ""
                         }`}
                         onClick={() => setSelectedSpeed(option.time)}
                       >
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span className="font-semibold">{option.time}</span>
-                          <Clock className="h-4 w-4 text-muted-foreground" />
+                        <div className="flex flex-col items-center gap-1.5">
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span className="font-semibold text-sm">
+                              {option.time}
+                            </span>
+                          </div>
+                          <Badge variant="secondary" className="text-xs">
+                            {option.fee}%
+                          </Badge>
                         </div>
-                        <span className="text-xs text-muted-foreground mb-1">
-                          {option.description}
-                        </span>
-                        <Badge variant="secondary" className="text-xs">
-                          Fee: {option.fee}
-                        </Badge>
                       </Button>
                     ))}
                   </div>
@@ -100,40 +166,42 @@ export default function RedemptionPage() {
                   </p>
                 </div>
 
-                <div className="rounded-lg bg-muted p-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      You will receive
-                    </span>
-                    <span className="font-medium">~2,450 CKB</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      Redemption Fee
-                    </span>
-                    <span className="font-medium">50 mCKB (2.0%)</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Exchange Rate</span>
-                    <span className="font-medium">1 mCKB = 1 CKB</span>
-                  </div>
-                  {selectedSpeed && selectedSpeed !== "Instant" && (
-                    <div className="flex justify-between text-sm pt-2 border-t border-border">
+                {redeemAmount && selectedSpeed && (
+                  <div className="rounded-lg bg-muted p-4 space-y-2">
+                    <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
-                        Available After
+                        You will receive
                       </span>
                       <span className="font-medium">
-                        {new Date(
-                          Date.now() +
-                            (redemptionOptions.find(
-                              (o) => o.time === selectedSpeed
-                            )?.days || 0) *
-                              86400000
-                        ).toLocaleDateString()}
+                        {redemptionSummary.receive.toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        })}{" "}
+                        CKB
                       </span>
                     </div>
-                  )}
-                </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        Redemption Fee
+                      </span>
+                      <span className="font-medium">
+                        {redemptionSummary.fee.toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        })}{" "}
+                        mCKB ({redemptionSummary.feePercent}%)
+                      </span>
+                    </div>
+                    {redemptionSummary.availableAfter && (
+                      <div className="flex justify-between text-sm pt-2 border-t border-border">
+                        <span className="text-muted-foreground">
+                          Available After
+                        </span>
+                        <span className="font-medium">
+                          {redemptionSummary.availableAfter.toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <Button className="w-full" size="lg" disabled={!selectedSpeed}>
                   <ArrowDownRight className="mr-2 h-4 w-4" />

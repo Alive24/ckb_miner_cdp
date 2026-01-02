@@ -53,7 +53,7 @@ export default function TreasuryPage() {
             <CardContent>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Activity className="h-4 w-4" />
-                <span>18.6M mCKB outstanding</span>
+                <span>18.6M mCKB in Supply</span>
               </div>
             </CardContent>
           </Card>

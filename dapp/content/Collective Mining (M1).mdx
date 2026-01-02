@@ -28,48 +28,32 @@ In CoMine, collective mining for CKB means that it:
 
 ### Mining Schedules: Mining Offering / Mining Recruiting
 
-- Miners can register as mining providers by depositing collaterals and keeping a liquidation deposit;
-- After registration, mining provider can propose mining offering at its own price and volume to allow mining sponsors to mint mining contract tokens (e.g, mCKB):
-  - Mining provider can set price in either CKB or stable coins against mCKB by absolute price or relative price;
-  - Mining provider receives payments immediately; Mining sponsor receives mining contract tokens immediately;
-  - Debt are recorded to Mining Provider in CKB 1:1 to mCKB;
-  - Global fixed rates apply;
-- The Mining provider maintains a secure Individual Collateral Ratio (ICR) by depositing enough collaterals against its debt or it will face liquidation;
-- Similarly, mining sponsors can propose a mining recruiting at its own price and volume with funding to allow mining providers to mint mining contract tokens to the sponsor;
-- Multi-level pricing.
-- Balance based perpetual contract.
-- Different tiers of fee: Different 0 interest span and different penalty rate.
+Mining schedules enable two-way tokenization of mining through **Mining Offering** and **Mining Recruiting**:
+
+- **Mining Offering**: Miners register with collaterals and propose offerings at their own price and volume. Sponsors accept and pay immediately, receiving mCKB tokens while the provider receives payment and incurs debt (1:1 CKB to mCKB).
+
+- **Mining Recruiting**: Sponsors propose recruiting opportunities with funding. Providers accept and receive funding immediately, while sponsors receive mCKB tokens and the provider incurs debt.
+
+Both mechanisms require miners to maintain a healthy Individual Collateral Ratio (ICR) to avoid liquidation. 
+
+See [Mining Schedule](./Mechanisms/Mining%20Schedule) for detailed information.
 
 ### Redemption
 
-- Holders of mining contract tokens can redeem them for the CKB 1:1 for the collaterals in the protocol pool;
-- Redemption can take different time length (instant, 1 day, 7 days, 14 days, 28 days) at different fee rate
-  - Redeem to iCKB by default; extra waiting time might apply for CKB.
-- Redemption targets are selected based on their ICR;
-  - (Milestone 2): Mining providers can set an additional interest rate to move further back in the redemption queue.
+Holders of mCKB tokens can redeem them for CKB at a 1:1 ratio from the protocol pool. Redemption takes 30 days by default without additional fee while quicker options (instant, 1 day, 7 days, 14 days) with varying fee rates are also available.
 
-### Individual Collateral Ratio Management and Liquidation
+See [Redemption](./Mechanisms/Redemption) for detailed information.
 
-- At any time, mining providers are obliged to maintain a healthy ICR or the collaterals will be liquidated; to do so, mining providers can stake more collaterals or repay debts; you can use mCKB or CKB to repay at 1% fee or directly mine to the protocol. By mining directly to repay or collateral, you enjoy a 0% fee.
-- Recovery Mode
-  - Mining Provider in Recovery Mode: When ICR < CCR, the mining provider will be put into recovery mode;
-  - Global Recovery Mode: `Total Collateralization Ratio` may fall below `Critical Collateralization Ratio`. When TCR < CCR, the protocol will enter global recovery mode;
-  - In recovery mode, actions that would lower ICR (For single mining provider in recovery mode) / TCR (For global recovery mode) will be blocked;
-  - Would be redeemee before treasury.
-- Liquidation: When liquidation happens, insolvent mining providers lose their collaterals and liquidation reserve to the treasury and cleared their debt;
-  - Soft liquidation: When ICR falls below CCR, daily soft liquidation would happen until ICR goes up above CCR; 5% debt will be repaid with 5% \* MCR worth of collaterals. At the same time, additional recovery mode fee applies.
-  - Hard liquidation: When ICR continues to fall and reached MCR, hard liquidation would happen; All debt would be repaid with all collaterals plus liquidation reserve.
+### Collateral Ratio Management and Liquidation
+
+Collateral Ratio is the ratio of collateral values over debt values.
+
+Miners must maintain a healthy **Individual Collateral Ratio (ICR)** by adding collaterals or repaying debt. Providers can repay using mCKB or CKB or directly mine to the protocol. When ICR falls below the **Critical Collateralization Ratio (CCR)**, miners enter **Recovery Mode**, where actions lowering ICR are blocked and daily **Soft Liquidation** occurs. If ICR continues to fall below the **Minimum Collateralization Ratio (MCR)**, **Hard Liquidation** occurs, transferring all collaterals and liquidation reserve to the treasury. When **Total Collateral Ratio (TCR)** falls below CCR, the whole protocol enters **Global Recovery Mode**.
+
+See [Collateral Ratio](./Mechanisms/Collateral%20Ratio) and [Liquidation](./Mechanisms/Liquidation) for detailed information.
 
 ### Treasury
 
-- Treasury is a public actor in the protocol that mitigates solvency risks and yields protocol revenue for the purpose of building an independent and self-sustainable DAO;
-- In liquidation either soft or hard, instead of redistribution, it takes over the liquidated collaterals and debt, and act as the foundational target for redemption.
-- It automatically arbitrages when depeg happens.
-  - Sell mCKB to markets when mCKB worths more than CKB.
-  - Buy mCKB from markets when mCKB worths less than the minimal price in the protocol.
-- Protocol Revenue:
-  - Mining Offering Fee: Fee for mining providers to propose mining offering;
-  - Mining Recruiting Fee: Fee for mining sponsors to propose mining recruiting;
-  - Redemption Fee: Fee for holders of mCKB to redeem for iCKB/CKB;
-  - Liquidation Fee: Liquidation reserve for liquidators to liquidate mining providers;
-  - Recovery Mode Fee: Fee for mining providers to get out of recovery mode;
+The Treasury is a public protocol actor that mitigates solvency risks and yields protocol revenue to build an independent, self-sustainable DAO. It receives liquidated collaterals and repayments to serve redemptions. The Treasury automatically arbitrages when mCKB depegs from CKB. 
+
+See [Treasury](./Protocol%20Roles/Treasury) for detailed information.

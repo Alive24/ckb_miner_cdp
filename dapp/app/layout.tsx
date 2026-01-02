@@ -31,7 +31,7 @@ const navbar = (
       </div>
     }
     logoLink="/"
-    projectLink="https://github.com/chuntengxiao/ckb_miner_cdp"
+    projectLink="https://github.com/Alive24/ckb_miner_cdp"
   >
     <div className="flex items-center gap-6">
       <nav className="hidden md:flex items-center gap-6">
@@ -119,7 +119,7 @@ export default async function RootLayout({
           navbar={navbar}
           footer={footer}
           pageMap={pageMap}
-          docsRepositoryBase="https://github.com/chuntengxiao/ckb_miner_cdp/tree/main/dapp/content"
+          docsRepositoryBase="https://github.com/Alive24/ckb_miner_cdp/tree/main/dapp/content"
         >
           {children}
         </Layout>

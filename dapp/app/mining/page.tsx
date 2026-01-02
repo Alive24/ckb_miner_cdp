@@ -47,7 +47,7 @@ const RepayOptions = () => {
   const options = [
     { value: "7", label: "7 days", fee: "1.2%" },
     { value: "14", label: "14 days", fee: "0.6%" },
-    { value: "28", label: "28 days", fee: "0.3%" },
+    { value: "30", label: "30 days", fee: "0.3%" },
   ];
 
   return (
@@ -1346,7 +1346,9 @@ export default function MiningPage() {
             <Card>
               <CardHeader>
                 <CardTitle>My Positions</CardTitle>
-                <CardDescription>Current mining provider status</CardDescription>
+                <CardDescription>
+                  Current mining provider status
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -1361,7 +1363,9 @@ export default function MiningPage() {
                     <span className="font-medium">8,108 mCKB</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Individual ICR</span>
+                    <span className="text-muted-foreground">
+                      Individual ICR
+                    </span>
                     <span className="font-medium text-green-600">185%</span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -1397,7 +1401,9 @@ export default function MiningPage() {
             <Card>
               <CardHeader>
                 <CardTitle>My Fundings</CardTitle>
-                <CardDescription>Active sponsorship commitments</CardDescription>
+                <CardDescription>
+                  Active sponsorship commitments
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
