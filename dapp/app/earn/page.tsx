@@ -17,8 +17,9 @@ import { TrendingUp, Zap, Coins, RefreshCw, RotateCcw } from "lucide-react";
 import { useComineOracle } from "@/hooks/use-comine-oracle";
 
 export default function EarnPage() {
-  const [liquidityToken, setLiquidityToken] = useState("iCKB");
-  const [liquidityAmount, setLiquidityAmount] = useState("");
+  const [icbkAmount, setIcbkAmount] = useState("");
+  const [ckbAmount, setCkbAmount] = useState("");
+  const [mckbAmount, setMckbAmount] = useState("");
   const [comineStakeAmount, setComineStakeAmount] = useState("");
   const [buyAmount, setBuyAmount] = useState("");
 
@@ -48,11 +49,9 @@ export default function EarnPage() {
   const supply = 5_200_000;
   const impliedPrice = issuance / supply;
 
-  // Mock $COMINE price in USD (for oracle display)
-  const [cominePriceUsd, setCominePriceUsd] = useState<number | null>(null);
-  const [cominePriceUpdatedAt, setCominePriceUpdatedAt] = useState<Date | null>(
-    null
-  );
+  // CKB price in USD (for calculating $COMINE USD value)
+  const [ckbPriceUsd, setCkbPriceUsd] = useState<number | null>(null);
+  const [ckbPriceUpdatedAt, setCkbPriceUpdatedAt] = useState<Date | null>(null);
 
   // Use mock oracle for $COMINE price (in CKB)
   const {
@@ -62,22 +61,41 @@ export default function EarnPage() {
   } = useComineOracle(impliedPrice);
   const cominePrice = oraclePrice;
 
-  // Mock $COMINE price in USD - simulate price updates
+  // Calculate estimated $COMINE price in USD based on CKB price
+  const cominePriceUsd = useMemo(() => {
+    if (!cominePrice || !ckbPriceUsd) return null;
+    return cominePrice * ckbPriceUsd;
+  }, [cominePrice, ckbPriceUsd]);
+
+  // Fetch CKB price in USD
   useEffect(() => {
-    // Set initial mock price (e.g., $0.025 per $COMINE)
-    const initialPrice = 0.025;
-    setCominePriceUsd(initialPrice);
-    setCominePriceUpdatedAt(new Date());
+    let isMounted = true;
 
-    // Simulate price updates every 60 seconds with small variations
-    const intervalId = setInterval(() => {
-      const variation = (Math.random() - 0.5) * 0.002; // ±$0.001 variation
-      const newPrice = Math.max(0.02, Math.min(0.03, initialPrice + variation));
-      setCominePriceUsd(newPrice);
-      setCominePriceUpdatedAt(new Date());
-    }, 60000);
+    const fetchCkbPrice = async () => {
+      try {
+        const response = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=nervos-network&vs_currencies=usd"
+        );
+        if (!response.ok) {
+          return;
+        }
+        const data = await response.json();
+        const price = data?.["nervos-network"]?.usd;
+        if (isMounted && typeof price === "number") {
+          setCkbPriceUsd(price);
+          setCkbPriceUpdatedAt(new Date());
+        }
+      } catch {
+        // Ignore oracle errors to keep UI responsive.
+      }
+    };
 
-    return () => clearInterval(intervalId);
+    fetchCkbPrice();
+    const intervalId = setInterval(fetchCkbPrice, 60000);
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, []);
 
   // Mock protocol data
@@ -94,20 +112,44 @@ export default function EarnPage() {
     return amount / cominePrice;
   }, [buyAmount, cominePrice]);
 
-  // Calculate total staked amount from input (input shows new total)
+  // Calculate total staked amount from all three tokens (input shows new total)
   const totalStakedLiquidityAmount = useMemo(() => {
-    return Number(liquidityAmount || 0);
-  }, [liquidityAmount]);
+    const icbk = Number(icbkAmount || currentStakedLiquidity.iCKB);
+    const ckb = Number(ckbAmount || currentStakedLiquidity.CKB);
+    const mckb = Number(mckbAmount || currentStakedLiquidity.mCKB);
+    return icbk + ckb + mckb;
+  }, [icbkAmount, ckbAmount, mckbAmount]);
 
-  // Calculate change amount for slider (slider uses difference)
-  const liquidityChangeAmount = useMemo(() => {
-    const current =
-      currentStakedLiquidity[
-        liquidityToken as keyof typeof currentStakedLiquidity
-      ] || 0;
-    const newTotal = Number(liquidityAmount || 0);
+  // Calculate change amounts for each token
+  const icbkChangeAmount = useMemo(() => {
+    const current = currentStakedLiquidity.iCKB;
+    const newTotal = Number(icbkAmount || current);
     return newTotal - current;
-  }, [liquidityAmount, liquidityToken, currentStakedLiquidity]);
+  }, [icbkAmount]);
+
+  const ckbChangeAmount = useMemo(() => {
+    const current = currentStakedLiquidity.CKB;
+    const newTotal = Number(ckbAmount || current);
+    return newTotal - current;
+  }, [ckbAmount]);
+
+  const mckbChangeAmount = useMemo(() => {
+    const current = currentStakedLiquidity.mCKB;
+    const newTotal = Number(mckbAmount || current);
+    return newTotal - current;
+  }, [mckbAmount]);
+
+  // Helper function to calculate input width based on total amount
+  const getInputWidth = (totalAmount: number) => {
+    const digits = Math.floor(Math.log10(Math.max(1, totalAmount))) + 1;
+    // Base width + padding for each digit, with minimum width
+    const baseWidth = 60; // Base width in pixels
+    const digitWidth = 8; // Approximate width per digit
+    const minWidth = 80;
+    const maxWidth = 200;
+    const calculatedWidth = baseWidth + digits * digitWidth;
+    return Math.max(minWidth, Math.min(maxWidth, calculatedWidth));
+  };
 
   // Calculate estimated rewards based on staked liquidity
   const estimatedRewards = useMemo(() => {
@@ -219,10 +261,15 @@ export default function EarnPage() {
           <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <div className="rounded-full border border-border px-3 py-1">
               $COMINE Oracle:{" "}
-              {cominePriceUsd !== null ? `$${cominePriceUsd.toFixed(4)}` : "—"}
+              {cominePrice !== null ? `${cominePrice.toFixed(4)} CKB` : "—"}
+              {cominePriceUsd !== null && (
+                <span className="ml-2 text-muted-foreground">
+                  (≈ ${cominePriceUsd.toFixed(4)})
+                </span>
+              )}
             </div>
-            {cominePriceUpdatedAt && (
-              <span>Updated {cominePriceUpdatedAt.toLocaleTimeString()}</span>
+            {lastUpdate && (
+              <span>Updated {lastUpdate.toLocaleTimeString()}</span>
             )}
           </div>
         </div>
@@ -237,181 +284,470 @@ export default function EarnPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex flex-wrap gap-2">
-                  {["iCKB", "CKB", "mCKB"].map((token) => (
-                    <Button
-                      key={token}
-                      type="button"
-                      variant={liquidityToken === token ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setLiquidityToken(token)}
-                    >
-                      {token} (
-                      {currentStakedLiquidity[
-                        token as keyof typeof currentStakedLiquidity
-                      ].toLocaleString()}
-                      )
-                    </Button>
-                  ))}
+                {/* iCKB Slider */}
+                <div className="space-y-3">
+                  <div className="flex justify-between text-xs">
+                    <p className="text-muted-foreground">
+                      Currently Staked:{" "}
+                      <span className="font-medium">
+                        {currentStakedLiquidity.iCKB.toLocaleString()} iCKB
+                      </span>
+                    </p>
+                    <p className="text-muted-foreground">
+                      Available:{" "}
+                      <span className="font-medium">
+                        {currentBalances.iCKB.toLocaleString()} iCKB
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-base font-semibold min-w-[3rem]">
+                      iCKB
+                    </span>
+                    <div className="flex-1 space-y-2 px-1 relative">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0</span>
+                        <span>
+                          {(
+                            currentStakedLiquidity.iCKB + currentBalances.iCKB
+                          ).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <div
+                          className="absolute top-0 left-1/2 -translate-y-full mb-3 flex items-center gap-1"
+                          style={{
+                            transform: "translateX(calc(-50% - 4px))",
+                            paddingTop: "4px",
+                            paddingBottom: "4px",
+                          }}
+                        >
+                          <Input
+                            id="icbk-amount"
+                            type="number"
+                            step="1"
+                            placeholder="0"
+                            max={
+                              currentStakedLiquidity.iCKB + currentBalances.iCKB
+                            }
+                            value={icbkAmount || currentStakedLiquidity.iCKB}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              const max =
+                                currentStakedLiquidity.iCKB +
+                                currentBalances.iCKB;
+                              if (value === "" || value === "-") {
+                                setIcbkAmount(value);
+                              } else {
+                                const numValue = Number(value);
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= max
+                                ) {
+                                  setIcbkAmount(value);
+                                } else if (numValue > max) {
+                                  setIcbkAmount(max.toString());
+                                }
+                              }
+                            }}
+                            className="text-right px-2 py-1 text-sm h-8 [&::-webkit-inner-spin-button]:opacity-100 [&::-webkit-outer-spin-button]:opacity-100"
+                            style={{
+                              width: `${getInputWidth(
+                                currentStakedLiquidity.iCKB +
+                                  currentBalances.iCKB
+                              )}px`,
+                            }}
+                          />
+                          <span className="text-xs text-muted-foreground whitespace-nowrap mr-2 justify-end items-center">
+                            iCKB
+                          </span>
+                          <span
+                            className={`text-xs whitespace-nowrap ${
+                              icbkChangeAmount > 0
+                                ? "text-green-600"
+                                : icbkChangeAmount < 0
+                                ? "text-red-600"
+                                : "text-muted-foreground"
+                            }`}
+                            style={{ minWidth: "60px" }}
+                          >
+                            ({icbkChangeAmount > 0 ? "+" : ""}
+                            {icbkChangeAmount.toLocaleString()})
+                          </span>
+                        </div>
+                        <Slider
+                          value={[
+                            Number(icbkAmount || currentStakedLiquidity.iCKB),
+                          ]}
+                          onValueChange={(value) =>
+                            setIcbkAmount(value[0].toString())
+                          }
+                          min={0}
+                          max={
+                            currentStakedLiquidity.iCKB + currentBalances.iCKB
+                          }
+                          step={Math.max(
+                            1,
+                            Math.floor(
+                              (currentBalances.iCKB +
+                                currentStakedLiquidity.iCKB) /
+                                100
+                            )
+                          )}
+                          className="w-full my-0.5"
+                          currentValue={currentStakedLiquidity.iCKB}
+                        />
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setIcbkAmount(
+                                currentStakedLiquidity.iCKB.toString()
+                              )
+                            }
+                            className="h-7 px-2 text-xs"
+                            disabled={
+                              Number(
+                                icbkAmount || currentStakedLiquidity.iCKB
+                              ) === currentStakedLiquidity.iCKB
+                            }
+                          >
+                            <RotateCcw className="h-3 w-3 mr-1" />
+                            Reset
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0</span>
+                        <span>
+                          {(
+                            currentStakedLiquidity.iCKB + currentBalances.iCKB
+                          ).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
+                {/* CKB Slider */}
                 <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="liquidity-amount">
-                      Total Staked ({liquidityToken})
-                    </Label>
-                    <div className="flex justify-between text-xs">
-                      <p className="text-muted-foreground">
-                        Currently Staked:{" "}
-                        <span className="font-medium">
-                          {currentStakedLiquidity[
-                            liquidityToken as keyof typeof currentStakedLiquidity
-                          ].toLocaleString()}{" "}
-                          {liquidityToken}
-                        </span>
-                      </p>
-                      <p className="text-muted-foreground">
-                        Available:{" "}
-                        <span className="font-medium">
-                          {currentBalances[
-                            liquidityToken as keyof typeof currentBalances
-                          ].toLocaleString()}{" "}
-                          {liquidityToken}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-2 px-1 relative">
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>0</span>
-                      <span>
-                        {(
-                          currentStakedLiquidity[
-                            liquidityToken as keyof typeof currentStakedLiquidity
-                          ] +
-                          currentBalances[
-                            liquidityToken as keyof typeof currentBalances
-                          ]
-                        ).toLocaleString()}
+                  <div className="flex justify-between text-xs">
+                    <p className="text-muted-foreground">
+                      Currently Staked:{" "}
+                      <span className="font-medium">
+                        {currentStakedLiquidity.CKB.toLocaleString()} CKB
                       </span>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-2 w-24">
-                        <Input
-                          id="liquidity-amount"
-                          type="number"
-                          step="1"
-                          placeholder="0"
-                          value={
-                            liquidityAmount ||
-                            currentStakedLiquidity[
-                              liquidityToken as keyof typeof currentStakedLiquidity
-                            ]
-                          }
-                          onChange={(e) => setLiquidityAmount(e.target.value)}
-                          className="text-center px-2 py-1 text-sm h-8"
-                        />
+                    </p>
+                    <p className="text-muted-foreground">
+                      Available:{" "}
+                      <span className="font-medium">
+                        {currentBalances.CKB.toLocaleString()} CKB
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-base font-semibold min-w-[3rem]">
+                      CKB
+                    </span>
+                    <div className="flex-1 space-y-2 px-1 relative">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0</span>
+                        <span>
+                          {(
+                            currentStakedLiquidity.CKB + currentBalances.CKB
+                          ).toLocaleString()}
+                        </span>
                       </div>
-                      <Slider
-                        value={[
-                          Number(
-                            liquidityAmount ||
-                              currentStakedLiquidity[
-                                liquidityToken as keyof typeof currentStakedLiquidity
-                              ]
-                          ),
-                        ]}
-                        onValueChange={(value) =>
-                          setLiquidityAmount(value[0].toString())
-                        }
-                        min={0}
-                        max={
-                          currentStakedLiquidity[
-                            liquidityToken as keyof typeof currentStakedLiquidity
-                          ] +
-                          currentBalances[
-                            liquidityToken as keyof typeof currentBalances
-                          ]
-                        }
-                        step={Math.max(
-                          1,
-                          Math.floor(
-                            (currentBalances[
-                              liquidityToken as keyof typeof currentBalances
-                            ] +
-                              currentStakedLiquidity[
-                                liquidityToken as keyof typeof currentStakedLiquidity
-                              ]) /
-                              100
-                          )
-                        )}
-                        className="w-full"
-                      />
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() =>
-                            setLiquidityAmount(
-                              currentStakedLiquidity[
-                                liquidityToken as keyof typeof currentStakedLiquidity
-                              ].toString()
-                            )
-                          }
-                          className="h-7 px-2 text-xs"
-                          disabled={
-                            Number(
-                              liquidityAmount ||
-                                currentStakedLiquidity[
-                                  liquidityToken as keyof typeof currentStakedLiquidity
-                                ]
-                            ) ===
-                            currentStakedLiquidity[
-                              liquidityToken as keyof typeof currentStakedLiquidity
-                            ]
-                          }
+                      <div className="relative">
+                        <div
+                          className="absolute top-0 left-1/2 -translate-y-full mb-3 flex items-center gap-1"
+                          style={{
+                            transform: "translateX(calc(-50% - 4px))",
+                            paddingTop: "4px",
+                            paddingBottom: "4px",
+                          }}
                         >
-                          <RotateCcw className="h-3 w-3 mr-1" />
-                          Reset
-                        </Button>
+                          <Input
+                            id="ckb-amount"
+                            type="number"
+                            step="1"
+                            placeholder="0"
+                            max={
+                              currentStakedLiquidity.CKB + currentBalances.CKB
+                            }
+                            value={ckbAmount || currentStakedLiquidity.CKB}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              const max =
+                                currentStakedLiquidity.CKB +
+                                currentBalances.CKB;
+                              if (value === "" || value === "-") {
+                                setCkbAmount(value);
+                              } else {
+                                const numValue = Number(value);
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= max
+                                ) {
+                                  setCkbAmount(value);
+                                } else if (numValue > max) {
+                                  setCkbAmount(max.toString());
+                                }
+                              }
+                            }}
+                            className="text-right px-2 py-1 text-sm h-8 [&::-webkit-inner-spin-button]:opacity-100 [&::-webkit-outer-spin-button]:opacity-100"
+                            style={{
+                              width: `${getInputWidth(
+                                currentStakedLiquidity.CKB + currentBalances.CKB
+                              )}px`,
+                            }}
+                          />
+                          <span className="text-xs text-muted-foreground whitespace-nowrap mr-2">
+                            CKB
+                          </span>
+                          <span
+                            className={`text-xs whitespace-nowrap ${
+                              ckbChangeAmount > 0
+                                ? "text-green-600"
+                                : ckbChangeAmount < 0
+                                ? "text-red-600"
+                                : "text-muted-foreground"
+                            }`}
+                            style={{ minWidth: "60px" }}
+                          >
+                            ({ckbChangeAmount > 0 ? "+" : ""}
+                            {ckbChangeAmount.toLocaleString()})
+                          </span>
+                        </div>
+                        <Slider
+                          value={[
+                            Number(ckbAmount || currentStakedLiquidity.CKB),
+                          ]}
+                          onValueChange={(value) =>
+                            setCkbAmount(value[0].toString())
+                          }
+                          min={0}
+                          max={currentStakedLiquidity.CKB + currentBalances.CKB}
+                          step={Math.max(
+                            1,
+                            Math.floor(
+                              (currentBalances.CKB +
+                                currentStakedLiquidity.CKB) /
+                                100
+                            )
+                          )}
+                          className="w-full my-0.5"
+                          currentValue={currentStakedLiquidity.CKB}
+                        />
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setCkbAmount(
+                                currentStakedLiquidity.CKB.toString()
+                              )
+                            }
+                            className="h-7 px-2 text-xs"
+                            disabled={
+                              Number(
+                                ckbAmount || currentStakedLiquidity.CKB
+                              ) === currentStakedLiquidity.CKB
+                            }
+                          >
+                            <RotateCcw className="h-3 w-3 mr-1" />
+                            Reset
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0</span>
+                        <span>
+                          {(
+                            currentStakedLiquidity.CKB + currentBalances.CKB
+                          ).toLocaleString()}
+                        </span>
                       </div>
                     </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>0</span>
-                      <span>
-                        {(
-                          currentStakedLiquidity[
-                            liquidityToken as keyof typeof currentStakedLiquidity
-                          ] +
-                          currentBalances[
-                            liquidityToken as keyof typeof currentBalances
-                          ]
-                        ).toLocaleString()}
+                  </div>
+                </div>
+
+                {/* mCKB Slider */}
+                <div className="space-y-3">
+                  <div className="flex justify-between text-xs">
+                    <p className="text-muted-foreground">
+                      Currently Staked:{" "}
+                      <span className="font-medium">
+                        {currentStakedLiquidity.mCKB.toLocaleString()} mCKB
                       </span>
+                    </p>
+                    <p className="text-muted-foreground">
+                      Available:{" "}
+                      <span className="font-medium">
+                        {currentBalances.mCKB.toLocaleString()} mCKB
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-base font-semibold min-w-[3rem]">
+                      mCKB
+                    </span>
+                    <div className="flex-1 space-y-2 px-1 relative">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0</span>
+                        <span>
+                          {(
+                            currentStakedLiquidity.mCKB + currentBalances.mCKB
+                          ).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <div
+                          className="absolute top-0 left-1/2 -translate-y-full mb-3 flex items-center gap-1"
+                          style={{
+                            transform: "translateX(calc(-50% - 4px))",
+                            paddingTop: "4px",
+                            paddingBottom: "4px",
+                          }}
+                        >
+                          <Input
+                            id="mckb-amount"
+                            type="number"
+                            step="1"
+                            placeholder="0"
+                            max={
+                              currentStakedLiquidity.mCKB + currentBalances.mCKB
+                            }
+                            value={mckbAmount || currentStakedLiquidity.mCKB}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              const max =
+                                currentStakedLiquidity.mCKB +
+                                currentBalances.mCKB;
+                              if (value === "" || value === "-") {
+                                setMckbAmount(value);
+                              } else {
+                                const numValue = Number(value);
+                                if (
+                                  !isNaN(numValue) &&
+                                  numValue >= 0 &&
+                                  numValue <= max
+                                ) {
+                                  setMckbAmount(value);
+                                } else if (numValue > max) {
+                                  setMckbAmount(max.toString());
+                                }
+                              }
+                            }}
+                            className="text-right px-2 py-1 text-sm h-8 [&::-webkit-inner-spin-button]:opacity-100 [&::-webkit-outer-spin-button]:opacity-100"
+                            style={{
+                              width: `${getInputWidth(
+                                currentStakedLiquidity.mCKB +
+                                  currentBalances.mCKB
+                              )}px`,
+                            }}
+                          />
+                          <span className="text-xs text-muted-foreground whitespace-nowrap mr-2">
+                            mCKB
+                          </span>
+                          <span
+                            className={`text-xs whitespace-nowrap ${
+                              mckbChangeAmount > 0
+                                ? "text-green-600"
+                                : mckbChangeAmount < 0
+                                ? "text-red-600"
+                                : "text-muted-foreground"
+                            }`}
+                            style={{ minWidth: "60px" }}
+                          >
+                            ({mckbChangeAmount > 0 ? "+" : ""}
+                            {mckbChangeAmount.toLocaleString()})
+                          </span>
+                        </div>
+                        <Slider
+                          value={[
+                            Number(mckbAmount || currentStakedLiquidity.mCKB),
+                          ]}
+                          onValueChange={(value) =>
+                            setMckbAmount(value[0].toString())
+                          }
+                          min={0}
+                          max={
+                            currentStakedLiquidity.mCKB + currentBalances.mCKB
+                          }
+                          step={Math.max(
+                            1,
+                            Math.floor(
+                              (currentBalances.mCKB +
+                                currentStakedLiquidity.mCKB) /
+                                100
+                            )
+                          )}
+                          className="w-full my-0.5"
+                          currentValue={currentStakedLiquidity.mCKB}
+                        />
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setMckbAmount(
+                                currentStakedLiquidity.mCKB.toString()
+                              )
+                            }
+                            className="h-7 px-2 text-xs"
+                            disabled={
+                              Number(
+                                mckbAmount || currentStakedLiquidity.mCKB
+                              ) === currentStakedLiquidity.mCKB
+                            }
+                          >
+                            <RotateCcw className="h-3 w-3 mr-1" />
+                            Reset
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0</span>
+                        <span>
+                          {(
+                            currentStakedLiquidity.mCKB + currentBalances.mCKB
+                          ).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  {liquidityAmount &&
-                    Number(liquidityAmount) !==
-                      currentStakedLiquidity[
-                        liquidityToken as keyof typeof currentStakedLiquidity
-                      ] && (
-                      <p className="text-xs font-medium text-primary">
-                        Change:{" "}
-                        {liquidityChangeAmount > 0 ? (
-                          <span className="text-green-600">
-                            +{liquidityChangeAmount.toLocaleString()}{" "}
-                            {liquidityToken}
-                          </span>
-                        ) : (
-                          <span className="text-red-600">
-                            {liquidityChangeAmount.toLocaleString()}{" "}
-                            {liquidityToken}
-                          </span>
-                        )}
-                      </p>
-                    )}
                 </div>
+
+                <Button
+                  className="w-full"
+                  size="lg"
+                  disabled={
+                    (Number(icbkAmount || currentStakedLiquidity.iCKB) ===
+                      currentStakedLiquidity.iCKB &&
+                      Number(ckbAmount || currentStakedLiquidity.CKB) ===
+                        currentStakedLiquidity.CKB &&
+                      Number(mckbAmount || currentStakedLiquidity.mCKB) ===
+                        currentStakedLiquidity.mCKB) ||
+                    totalStakedLiquidityAmount < 0 ||
+                    totalStakedLiquidityAmount >
+                      currentStakedLiquidity.iCKB +
+                        currentBalances.iCKB +
+                        currentStakedLiquidity.CKB +
+                        currentBalances.CKB +
+                        currentStakedLiquidity.mCKB +
+                        currentBalances.mCKB
+                  }
+                >
+                  <Zap className="mr-2 h-4 w-4" />
+                  {totalStakedLiquidityAmount === 0 ? "Stake" : "Adjust Stake"}
+                </Button>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-4 space-y-3">
@@ -534,33 +870,6 @@ export default function EarnPage() {
                     </div>
                   </div>
                 </div>
-
-                <Button
-                  className="w-full"
-                  size="lg"
-                  disabled={
-                    !liquidityAmount ||
-                    Number(liquidityAmount) ===
-                      currentStakedLiquidity[
-                        liquidityToken as keyof typeof currentStakedLiquidity
-                      ] ||
-                    Number(liquidityAmount) < 0 ||
-                    Number(liquidityAmount) >
-                      currentStakedLiquidity[
-                        liquidityToken as keyof typeof currentStakedLiquidity
-                      ] +
-                        currentBalances[
-                          liquidityToken as keyof typeof currentBalances
-                        ]
-                  }
-                >
-                  <Zap className="mr-2 h-4 w-4" />
-                  {currentStakedLiquidity[
-                    liquidityToken as keyof typeof currentStakedLiquidity
-                  ] === 0
-                    ? "Stake"
-                    : "Adjust Stake"}
-                </Button>
               </CardContent>
             </Card>
 
@@ -574,8 +883,7 @@ export default function EarnPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="comine-stake">Total Staked ($COMINE)</Label>
+                  <div className="space-y-3">
                     <div className="flex justify-between text-xs">
                       <p className="text-muted-foreground">
                         Currently Staked:{" "}
@@ -590,89 +898,145 @@ export default function EarnPage() {
                         </span>
                       </p>
                     </div>
-                  </div>
-                  <div className="space-y-2 px-1 relative">
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>0</span>
-                      <span>
-                        {(
-                          currentStakedComine + availableComine
-                        ).toLocaleString()}
+                    <div className="flex items-center gap-4">
+                      <span className="text-base font-semibold min-w-[3rem]">
+                        $COMINE
                       </span>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-2 w-24">
-                        <Input
-                          id="comine-stake"
-                          type="number"
-                          step="1"
-                          placeholder="0"
-                          value={comineStakeAmount || currentStakedComine}
-                          onChange={(e) => setComineStakeAmount(e.target.value)}
-                          className="text-center px-2 py-1 text-sm h-8"
-                        />
+                      <div className="flex-1 space-y-2 px-1 relative">
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>0</span>
+                          <span>
+                            {(
+                              currentStakedComine + availableComine
+                            ).toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="relative">
+                          <div
+                            className="absolute top-0 left-1/2 -translate-y-full mb-3 flex items-center gap-1"
+                            style={{
+                              transform: "translateX(calc(-50% - 4px))",
+                              paddingTop: "4px",
+                              paddingBottom: "4px",
+                            }}
+                          >
+                            <Input
+                              id="comine-stake"
+                              type="number"
+                              step="1"
+                              placeholder="0"
+                              max={currentStakedComine + availableComine}
+                              value={comineStakeAmount || currentStakedComine}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                const max =
+                                  currentStakedComine + availableComine;
+                                if (value === "" || value === "-") {
+                                  setComineStakeAmount(value);
+                                } else {
+                                  const numValue = Number(value);
+                                  if (
+                                    !isNaN(numValue) &&
+                                    numValue >= 0 &&
+                                    numValue <= max
+                                  ) {
+                                    setComineStakeAmount(value);
+                                  } else if (numValue > max) {
+                                    setComineStakeAmount(max.toString());
+                                  }
+                                }
+                              }}
+                              className="text-right px-2 py-1 text-sm h-8 [&::-webkit-inner-spin-button]:opacity-100 [&::-webkit-outer-spin-button]:opacity-100"
+                              style={{
+                                width: `${getInputWidth(
+                                  currentStakedComine + availableComine
+                                )}px`,
+                              }}
+                            />
+                            <span className="text-xs text-muted-foreground whitespace-nowrap mr-2 justify-end items-center">
+                              $COMINE
+                            </span>
+                            <span
+                              className={`text-xs whitespace-nowrap ${
+                                comineChangeAmount > 0
+                                  ? "text-green-600"
+                                  : comineChangeAmount < 0
+                                  ? "text-red-600"
+                                  : "text-muted-foreground"
+                              }`}
+                              style={{ minWidth: "60px" }}
+                            >
+                              ({comineChangeAmount > 0 ? "+" : ""}
+                              {comineChangeAmount.toLocaleString()})
+                            </span>
+                          </div>
+                          <Slider
+                            value={[
+                              Number(comineStakeAmount || currentStakedComine),
+                            ]}
+                            onValueChange={(value) =>
+                              setComineStakeAmount(value[0].toString())
+                            }
+                            min={0}
+                            max={currentStakedComine + availableComine}
+                            step={Math.max(
+                              1,
+                              Math.floor(
+                                (availableComine + currentStakedComine) / 100
+                              )
+                            )}
+                            className="w-full my-0.5"
+                            currentValue={currentStakedComine}
+                          />
+                          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                setComineStakeAmount(
+                                  currentStakedComine.toString()
+                                )
+                              }
+                              className="h-7 px-2 text-xs"
+                              disabled={
+                                Number(
+                                  comineStakeAmount || currentStakedComine
+                                ) === currentStakedComine
+                              }
+                            >
+                              <RotateCcw className="h-3 w-3 mr-1" />
+                              Reset
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>0</span>
+                          <span>
+                            {(
+                              currentStakedComine + availableComine
+                            ).toLocaleString()}
+                          </span>
+                        </div>
                       </div>
-                      <Slider
-                        value={[
-                          Number(comineStakeAmount || currentStakedComine),
-                        ]}
-                        onValueChange={(value) =>
-                          setComineStakeAmount(value[0].toString())
-                        }
-                        min={0}
-                        max={currentStakedComine + availableComine}
-                        step={Math.max(
-                          1,
-                          Math.floor(
-                            (availableComine + currentStakedComine) / 100
-                          )
-                        )}
-                        className="w-full"
-                      />
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-2">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() =>
-                            setComineStakeAmount(currentStakedComine.toString())
-                          }
-                          className="h-7 px-2 text-xs"
-                          disabled={
-                            Number(comineStakeAmount || currentStakedComine) ===
-                            currentStakedComine
-                          }
-                        >
-                          <RotateCcw className="h-3 w-3 mr-1" />
-                          Reset
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>0</span>
-                      <span>
-                        {(
-                          currentStakedComine + availableComine
-                        ).toLocaleString()}
-                      </span>
                     </div>
                   </div>
-                  {comineStakeAmount &&
-                    Number(comineStakeAmount) !== currentStakedComine && (
-                      <p className="text-xs font-medium text-primary">
-                        Change:{" "}
-                        {comineChangeAmount > 0 ? (
-                          <span className="text-green-600">
-                            +{comineChangeAmount.toLocaleString()} $COMINE
-                          </span>
-                        ) : (
-                          <span className="text-red-600">
-                            {comineChangeAmount.toLocaleString()} $COMINE
-                          </span>
-                        )}
-                      </p>
-                    )}
                 </div>
+
+                <Button
+                  className="w-full"
+                  size="lg"
+                  variant="outline"
+                  disabled={
+                    !comineStakeAmount ||
+                    Number(comineStakeAmount) === currentStakedComine ||
+                    Number(comineStakeAmount) < 0 ||
+                    Number(comineStakeAmount) >
+                      currentStakedComine + availableComine
+                  }
+                >
+                  {Number(currentStakedComine) === 0 ? "Stake" : "Adjust Stake"}
+                </Button>
 
                 <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-4 space-y-3">
                   <div className="flex items-center gap-2">
@@ -741,21 +1105,6 @@ export default function EarnPage() {
                     pool, and oracle price. Actual rewards may vary.
                   </p>
                 </div>
-
-                <Button
-                  className="w-full"
-                  size="lg"
-                  variant="outline"
-                  disabled={
-                    !comineStakeAmount ||
-                    Number(comineStakeAmount) === currentStakedComine ||
-                    Number(comineStakeAmount) < 0 ||
-                    Number(comineStakeAmount) >
-                      currentStakedComine + availableComine
-                  }
-                >
-                  {Number(currentStakedComine) === 0 ? "Stake" : "Adjust Stake"}
-                </Button>
               </CardContent>
             </Card>
           </div>
