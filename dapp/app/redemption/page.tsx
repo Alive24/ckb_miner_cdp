@@ -337,34 +337,6 @@ export default function RedemptionPage() {
                 </div>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Current Rates</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    mCKB/CKB Rate
-                  </span>
-                  <span className="text-sm font-medium">1.00</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    24h Redemptions
-                  </span>
-                  <span className="text-sm font-medium">12,450 mCKB</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    Liquidity Available
-                  </span>
-                  <span className="text-sm font-medium text-green-600">
-                    High
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </main>

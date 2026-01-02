@@ -13,7 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { TrendingUp, Zap, Coins, RefreshCw, RotateCcw } from "lucide-react";
+import {
+  TrendingUp,
+  Zap,
+  Coins,
+  RefreshCw,
+  RotateCcw,
+  ArrowLeftRight,
+} from "lucide-react";
 import { useComineOracle } from "@/hooks/use-comine-oracle";
 
 export default function EarnPage() {
@@ -43,6 +50,14 @@ export default function EarnPage() {
     totalCollateralsAcquired: 142_500, // Total collaterals acquired
     netReward: 17_500, // Difference (collaterals - consumed liquidity)
     participationCount: 8, // Number of liquidations participated
+  };
+
+  // Mock redemption participation data
+  const redemptionData = {
+    totalMckbReceived: 95_000, // Total mCKB received from redemptions
+    totalCkbProvided: 98_750, // Total CKB provided (staked liquidity consumed)
+    totalFeesEarned: 3_750, // Total fees earned from redemptions
+    participationCount: 12, // Number of redemptions participated
   };
 
   const issuance = 12_500_000;
@@ -247,6 +262,45 @@ export default function EarnPage() {
     totalStakedComine,
     annualComineStakingRewards,
     cominePrice,
+  ]);
+
+  // Calculate combined estimated rewards (share of total issuance)
+  const combinedEstimatedRewards = useMemo(() => {
+    const liquidityRewards = estimatedRewards.annualComine;
+    const comineRewards = estimatedComineRewards.annualComine;
+    const totalAnnualComine = liquidityRewards + comineRewards;
+
+    // Calculate share of total issuance
+    const shareOfIssuance =
+      annualSecondaryIssuance > 0
+        ? (totalAnnualComine / annualSecondaryIssuance) * 100
+        : 0;
+
+    // Calculate combined annual value
+    const combinedAnnualValue = totalAnnualComine * (cominePrice || 0);
+
+    // Calculate combined staked value for APY calculation
+    const liquidityValue = totalStakedLiquidityAmount;
+    const comineValue = totalStakedComineAmount * (cominePrice || 0);
+    const totalStakedValue = liquidityValue + comineValue;
+
+    // Calculate combined APY
+    const combinedApy =
+      totalStakedValue > 0 ? (combinedAnnualValue / totalStakedValue) * 100 : 0;
+
+    return {
+      shareOfIssuance,
+      annualComine: totalAnnualComine,
+      annualValue: combinedAnnualValue,
+      apy: combinedApy,
+    };
+  }, [
+    estimatedRewards,
+    estimatedComineRewards,
+    annualSecondaryIssuance,
+    cominePrice,
+    totalStakedLiquidityAmount,
+    totalStakedComineAmount,
   ]);
 
   return (
@@ -750,74 +804,6 @@ export default function EarnPage() {
                 </Button>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                      <span className="font-semibold">Estimated Rewards</span>
-                    </div>
-                    {totalStakedLiquidityAmount > 0 ? (
-                      <>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div>
-                            <p className="text-xs text-muted-foreground">
-                              Share of Issuance
-                            </p>
-                            <p className="text-lg font-bold text-primary">
-                              {estimatedRewards.share.toFixed(4)}%
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground">
-                              $COMINE/Year
-                            </p>
-                            <p className="text-lg font-bold text-primary">
-                              {estimatedRewards.annualComine.toLocaleString(
-                                undefined,
-                                {
-                                  maximumFractionDigits: 2,
-                                }
-                              )}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground">
-                              Estimated APY
-                            </p>
-                            <p className="text-lg font-bold text-green-600">
-                              {estimatedRewards.apy.toFixed(2)}%
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-2 border-t border-primary/20">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">
-                              Estimated Annual Value
-                            </span>
-                            <span className="font-semibold">
-                              {estimatedRewards.annualValue.toLocaleString(
-                                undefined,
-                                {
-                                  maximumFractionDigits: 2,
-                                }
-                              )}{" "}
-                              CKB
-                            </span>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="text-center py-4">
-                        <p className="text-sm text-muted-foreground">
-                          Enter an amount to see estimated rewards
-                        </p>
-                      </div>
-                    )}
-                    <p className="text-xs text-muted-foreground pt-2 text-center">
-                      * Rewards are estimated based on current share, secondary
-                      issuance, and oracle price. Actual rewards may vary.
-                    </p>
-                  </div>
-
                   <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 space-y-3">
                     <div className="flex items-start gap-2">
                       <Coins className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5" />
@@ -863,6 +849,60 @@ export default function EarnPage() {
                             </span>
                             <span className="font-semibold text-blue-800 dark:text-blue-200">
                               {liquidationData.participationCount} liquidations
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-4 space-y-3">
+                    <div className="flex items-start gap-2">
+                      <ArrowLeftRight className="h-4 w-4 text-purple-600 dark:text-purple-400 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-purple-800 dark:text-purple-200 mb-2">
+                          Redemption Participation
+                        </p>
+                        <p className="text-xs text-purple-700 dark:text-purple-300 mb-3">
+                          Staked liquidity can participate in redemptions.
+                          Liquidity providers receive mCKB as people redeem and
+                          provide CKB from staked liquidity, helping quicker
+                          redemption settlement and earning redemption fees.
+                        </p>
+                        <div className="space-y-2 pt-2 border-t border-purple-200 dark:border-purple-800">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-purple-700 dark:text-purple-300">
+                              Total mCKB Received:
+                            </span>
+                            <span className="font-semibold text-purple-800 dark:text-purple-200">
+                              {redemptionData.totalMckbReceived.toLocaleString()}{" "}
+                              mCKB
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-purple-700 dark:text-purple-300">
+                              Total CKB Provided:
+                            </span>
+                            <span className="font-semibold text-purple-800 dark:text-purple-200">
+                              {redemptionData.totalCkbProvided.toLocaleString()}{" "}
+                              CKB
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-purple-700 dark:text-purple-300">
+                              Total Fees Earned:
+                            </span>
+                            <span className="font-semibold text-green-600 dark:text-green-400">
+                              +{redemptionData.totalFeesEarned.toLocaleString()}{" "}
+                              CKB
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-purple-700 dark:text-purple-300">
+                              Participations:
+                            </span>
+                            <span className="font-semibold text-purple-800 dark:text-purple-200">
+                              {redemptionData.participationCount} redemptions
                             </span>
                           </div>
                         </div>
@@ -1037,143 +1077,145 @@ export default function EarnPage() {
                 >
                   {Number(currentStakedComine) === 0 ? "Stake" : "Adjust Stake"}
                 </Button>
-
-                <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-4 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Estimated Rewards</span>
-                  </div>
-                  {totalStakedComineAmount > 0 ? (
-                    <>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            Share of Pool
-                          </p>
-                          <p className="text-lg font-bold text-primary">
-                            {estimatedComineRewards.share.toFixed(4)}%
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            $COMINE/Year
-                          </p>
-                          <p className="text-lg font-bold text-primary">
-                            {estimatedComineRewards.annualComine.toLocaleString(
-                              undefined,
-                              {
-                                maximumFractionDigits: 2,
-                              }
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            Estimated APY
-                          </p>
-                          <p className="text-lg font-bold text-green-600">
-                            {estimatedComineRewards.apy.toFixed(2)}%
-                          </p>
-                        </div>
-                      </div>
-                      <div className="pt-2 border-t border-primary/20">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">
-                            Estimated Annual Value
-                          </span>
-                          <span className="font-semibold">
-                            {estimatedComineRewards.annualValue.toLocaleString(
-                              undefined,
-                              {
-                                maximumFractionDigits: 2,
-                              }
-                            )}{" "}
-                            CKB
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-center py-4">
-                      <p className="text-sm text-muted-foreground">
-                        Enter an amount to see estimated rewards
-                      </p>
-                    </div>
-                  )}
-                  <p className="text-xs text-muted-foreground pt-2 text-center">
-                    * Rewards are estimated based on current share, staking
-                    pool, and oracle price. Actual rewards may vary.
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </div>
 
           <div className="space-y-6">
-            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
               <CardHeader>
                 <CardTitle>Buy Staked $COMINE</CardTitle>
                 <CardDescription>
                   Price from oracle feed. Updates every 30 seconds.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="rounded-lg bg-muted p-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Issuance</span>
-                    <span className="font-medium">
-                      {issuance.toLocaleString()}
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Oracle Price
+                    {oracleLoading && (
+                      <RefreshCw className="inline-block ml-1 h-3 w-3 animate-spin" />
+                    )}
+                  </span>
+                  <span className="text-lg font-bold text-primary">
+                    {cominePrice.toFixed(4)} CKB
+                  </span>
+                </div>
+                {cominePriceUsd !== null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      USD Price
+                    </span>
+                    <span className="text-sm font-medium">
+                      ${cominePriceUsd.toFixed(4)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Supply</span>
-                    <span className="font-medium">
-                      {supply.toLocaleString()}
-                    </span>
+                )}
+                <div className="pt-2 border-t border-primary/20">
+                  <div className="space-y-2">
+                    <Label htmlFor="buy-comine" className="text-xs">
+                      Pay in CKB
+                    </Label>
+                    <Input
+                      id="buy-comine"
+                      type="number"
+                      step="1"
+                      placeholder="0"
+                      value={buyAmount}
+                      onChange={(e) => setBuyAmount(e.target.value)}
+                      className="h-9"
+                    />
+                    {buyAmount && (
+                      <p className="text-xs text-muted-foreground">
+                        Estimated sCOMINE:{" "}
+                        <span className="font-medium">
+                          {estimatedStake.toFixed(2)}
+                        </span>
+                      </p>
+                    )}
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Implied Price</span>
-                    <span className="font-semibold">
-                      {impliedPrice.toFixed(4)} CKB
-                    </span>
-                  </div>
-                  <div className="pt-2 border-t">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">
-                        Oracle Price
-                        {oracleLoading && (
-                          <RefreshCw className="inline-block ml-1 h-3 w-3 animate-spin" />
-                        )}
-                      </span>
-                      <span className="font-semibold text-primary">
-                        {cominePrice.toFixed(4)} CKB
-                      </span>
+                  <Button className="w-full mt-3" size="sm">
+                    Buy & Stake $COMINE
+                  </Button>
+                </div>
+                {lastUpdate && (
+                  <p className="text-xs text-muted-foreground text-center">
+                    Last update: {lastUpdate.toLocaleTimeString()}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+              <CardHeader>
+                <CardTitle>Estimated Rewards</CardTitle>
+                <CardDescription>
+                  Share of issuance from staking liquidity and $COMINE
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {totalStakedLiquidityAmount > 0 ||
+                totalStakedComineAmount > 0 ? (
+                  <>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          Share of Issuance
+                        </p>
+                        <p className="text-lg font-bold text-primary">
+                          {combinedEstimatedRewards.shareOfIssuance.toFixed(4)}%
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          $COMINE/Year
+                        </p>
+                        <p className="text-lg font-bold text-primary">
+                          {combinedEstimatedRewards.annualComine.toLocaleString(
+                            undefined,
+                            {
+                              maximumFractionDigits: 2,
+                            }
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          Estimated APY
+                        </p>
+                        <p className="text-lg font-bold text-green-600">
+                          {combinedEstimatedRewards.apy.toFixed(2)}%
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Last update: {lastUpdate.toLocaleTimeString()}
+                    <div className="pt-2 border-t border-primary/20">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Estimated Annual Value
+                        </span>
+                        <span className="font-semibold">
+                          {combinedEstimatedRewards.annualValue.toLocaleString(
+                            undefined,
+                            {
+                              maximumFractionDigits: 2,
+                            }
+                          )}{" "}
+                          CKB
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground">
+                      Stake liquidity or $COMINE to see estimated rewards
                     </p>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="buy-comine">Pay in CKB</Label>
-                  <Input
-                    id="buy-comine"
-                    type="number"
-                    step="1"
-                    placeholder="0"
-                    value={buyAmount}
-                    onChange={(e) => setBuyAmount(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Estimated sCOMINE:{" "}
-                    <span className="font-medium">
-                      {estimatedStake.toFixed(2)}
-                    </span>
-                  </p>
-                </div>
-
-                <Button className="w-full">Buy & Stake $COMINE</Button>
+                )}
+                <p className="text-xs text-muted-foreground pt-2 text-center">
+                  * Rewards are estimated based on current share of issuance,
+                  secondary issuance, and oracle price. Actual rewards may vary.
+                </p>
               </CardContent>
             </Card>
 
@@ -1203,7 +1245,7 @@ export default function EarnPage() {
                     Pending Rewards
                   </span>
                   <span className="font-semibold text-green-600">
-                    1,240 CKB
+                    1,240 $COMINE
                   </span>
                 </div>
 
@@ -1215,36 +1257,6 @@ export default function EarnPage() {
                   <Button size="sm" variant="outline">
                     Withdraw
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Earn Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Total Stakers</span>
-                  <span className="font-medium">6,245</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    30d Fees Distributed
-                  </span>
-                  <span className="font-medium">62,400 CKB</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    $COMINE Circulating
-                  </span>
-                  <span className="font-medium">2.5M</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    Average Estimated APY
-                  </span>
-                  <span className="font-medium text-green-600">~9.1%</span>
                 </div>
               </CardContent>
             </Card>

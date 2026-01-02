@@ -316,6 +316,78 @@ export default function StatisticsPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Redemption Statistics */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Redemption Statistics</CardTitle>
+                <CardDescription>
+                  Redemption activity and queue metrics
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Total Redemptions (30d)
+                    </p>
+                    <p className="text-2xl font-bold">45,230 mCKB</p>
+                    <p className="text-xs text-green-600 mt-1">
+                      +8.2% vs last month
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Pending Redemptions
+                    </p>
+                    <p className="text-2xl font-bold">8,450 mCKB</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Avg wait: 5.2 days
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Redemption Fees (30d)
+                    </p>
+                    <p className="text-2xl font-bold">1,125 CKB</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Distributed to LPs
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Avg Redemption Size
+                    </p>
+                    <p className="text-2xl font-bold">2,847 mCKB</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Per transaction
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-4 border-t space-y-3">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">
+                      Instant Redemptions (30d)
+                    </span>
+                    <span className="font-medium">12,450 mCKB (27.5%)</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">
+                      Scheduled Redemptions (30d)
+                    </span>
+                    <span className="font-medium">32,780 mCKB (72.5%)</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">
+                      Redemption Queue Depth
+                    </span>
+                    <span className="font-medium text-yellow-600">
+                      Moderate
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Right Column - System Status */}
@@ -374,6 +446,72 @@ export default function StatisticsPage() {
                   >
                     20 (&lt;2%)
                   </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Solvency Metrics */}
+            <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+              <CardHeader>
+                <CardTitle>Solvency Metrics</CardTitle>
+                <CardDescription>
+                  Protocol solvency and safety metrics
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">
+                      Total Collateral Ratio (TCR)
+                    </span>
+                    <span className="text-lg font-bold text-primary">167%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">
+                      Critical Collateral Ratio (CCR)
+                    </span>
+                    <span className="text-sm font-medium">150%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">
+                      Liquidation Collateral Ratio (LCR)
+                    </span>
+                    <span className="text-sm font-medium">150%</span>
+                  </div>
+                  <div className="pt-2 border-t">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-muted-foreground">
+                        Safety Margin
+                      </span>
+                      <span className="text-sm font-bold text-green-600">
+                        +17%
+                      </span>
+                    </div>
+                    <Progress value={67} className="h-2" />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Well above recovery mode threshold
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Collateral Coverage
+                    </span>
+                    <span className="font-medium">1.67x</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Solvency Buffer
+                    </span>
+                    <span className="font-medium text-green-600">4.2M CKB</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Max Redemption Capacity
+                    </span>
+                    <span className="font-medium">14.6M CKB</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -493,10 +631,40 @@ export default function StatisticsPage() {
                 ))}
               </CardContent>
             </Card>
+
+            {/* Earn Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Earn Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Total Stakers</span>
+                  <span className="font-medium">6,245</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    30d Fees Distributed
+                  </span>
+                  <span className="font-medium">62,400 CKB</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    $COMINE Circulating
+                  </span>
+                  <span className="font-medium">2.5M</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    Average Estimated APY
+                  </span>
+                  <span className="font-medium text-green-600">~9.1%</span>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
     </div>
   );
 }
-

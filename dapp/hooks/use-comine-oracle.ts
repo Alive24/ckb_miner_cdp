@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 /**
  * Mock Oracle for $COMINE Price
- * 
+ *
  * This is a mock implementation that simulates an oracle price feed.
  * In production, this would connect to a real oracle service.
  */
@@ -17,11 +17,11 @@ export function useComineOracle(basePrice: number) {
     // Simulate oracle price updates every 30 seconds
     const interval = setInterval(() => {
       setIsLoading(true);
-      
+
       // Simulate price variation (±2% from base price)
       const variation = (Math.random() - 0.5) * 0.04; // -2% to +2%
       const newPrice = basePrice * (1 + variation);
-      
+
       setTimeout(() => {
         setOraclePrice(newPrice);
         setLastUpdate(new Date());
@@ -41,7 +41,3 @@ export function useComineOracle(basePrice: number) {
     confidence: 0.95,
   };
 }
-
-
-
-
