@@ -43,12 +43,7 @@ CoMine combines CKB mining with collateralised debt positions (CDPs) to enable d
   - Mining Offering: A mining schedule proposal by miners with a price (CKB or stable coin) for sponsors to mint mCKB against the miner’s debt.
   - Mining Recruiting: A mining schedule proposal by sponsors with a price (CKB or stable coin) for miners to mint mCKB against their own debt.
   - Deposit / Debt / Repay: Miners deposit collateral against their debt (mCKB minted 1:1) and maintain a healthy ICR by adding collateral or repaying debt with CKB.
-- Collateral Ratio:
-  - Individual Collateral Ratio (ICR): The ratio of collateral to debt for any individual miner.
-  - Healthy Collateral Ratio: The standard for ICR to be healthy (M2) and earn $COMINE.
-  - Total Collateral Ratio (TCR): The ratio of all collateral and assets to all debt for the protocol.
-  - Critical Collateral Ratio (CCR): Threshold for recovery mode. In recovery mode, actions that lower ICR (individual) or TCR (global) are prohibited; partial liquidation occurs daily and additional interest applies until ICR rises above CCR.
-  - Liquidation Collateral Ratio (LCR): The bottom line for ICR under which a mining schedule is fully liquidated and collateral plus debt are transferred to the treasury with the liquidation reserve.
+- Collateral Ratio: The ratio of collateral to debt for any individual miner and the whole protocol. It represents the health of the protocol solvency, and triggers different mechanisms at different thresholds.
 - Redemption: Holders of mCKB redeem for protocol collateral 1:1 after 30 days (by default; faster options available with fee). mCKB is burned and the same amount of debt is removed.
 - Liquidation: An automated procedure that repays debt with deposited collateral for miners with ICR below CCR. Partial liquidation restores unhealthy ICR; full liquidation happens if ICR drops below LCR.
 - Treasury: Receives collateral and debt from miners when they repay or get liquidated.
