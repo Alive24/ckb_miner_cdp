@@ -1,4 +1,4 @@
-import { Callout } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
 
 # Collective Mining (M1)
 
@@ -23,6 +23,155 @@ With CoMine, we transformed mining to be:
 - **Collateralized**: Redemption is backed by the whole protocol collectively instead of the actual miner;
 - **Financialised**: Miners are able to fine control risk and exposure, speculate, leverage, and liquidity;
 - **Incentivised**: By adjusting fee rates and issuing $COMINE, the protocol can incentivise miners with specific attributes (e.g. smaller size, different locations, different mining machines) to increase miner decentralisation.
+
+## How It Works
+
+Here are some quick examples to understand how the protocol works:
+
+<Tabs items={['Mining Offering', 'Mining Recruiting', 'Redemption', 'Maintain ICR', 'Liquidation']}>
+<Tabs.Tab>
+
+### Example 1: Mining Offering Flow
+
+**Scenario**: Alice (Miner) wants to tokenize her mining operation, and Bob (Sponsor) wants to invest in mining.
+
+1. **Alice registers as a Miner**:
+  - Deposits 10,000 CKB as collateral, and another 50 CKB as liquidation reserve
+
+2. **Alice creates a Mining Offering**:
+  - Proposes to tokenize 1,000 CKB worth of mining contracts
+  - Sets price at 0.95 CKB per mCKB (5% discount for sponsors)
+
+3. **Bob accepts the offering**:
+  - Pays 950 CKB (1,000 × 0.95) to Alice immediately
+  - 1,000 mCKB tokens are minted to Bob instantly; 10 mCKB tokens are minted to treasury as fee
+  - Alice's debt increases by 1,010 CKB (1,000 + 10)
+  - Alice's ICR = 10,000 / 1,010 = 990% (healthy)
+
+4. **Bob can now**:
+  - Trade mCKB on secondary markets
+  - Hold for potential appreciation
+  - Redeem for CKB at any time (with fees for faster redemption)
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+### Example 2: Mining Recruiting Flow
+
+**Scenario**: Charlie (Sponsor) wants to recruit miners, and David (Miner) needs funding.
+
+1. **Charlie proposes Mining Recruiting**:
+  - Offers to fund 2,000 CKB
+  - Sets price at 0.98 CKB per mCKB
+
+2. **David accepts the recruiting**:
+  - David already has 15,000 CKB collateral deposited
+  - Receives 1,960 CKB funding immediately (2,000 × 0.98)
+  - 2,000 mCKB tokens are minted to Charlie; 20 mCKB tokens are minted to treasury as fee
+  - David's debt increases by 2,020 CKB (2,000 + 20)
+  - David's ICR = 15,000 / 2,020 = 742.57% (healthy)
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+### Example 3: Redemption
+
+**Scenario**: Bob wants to redeem his 1,000 mCKB for CKB.
+
+1. **Standard redemption (30 days, no fee)**:
+  - Bob submits redemption request for 1,000 mCKB
+  - Waits 30 days
+  - Receives 1,000 CKB (from either treasury or miners with lowest ICR)
+  - 1000 mCKB is burned and the same amount of debt is removed
+
+2. **Fast redemption (7 days, 1% fee)**:
+  - Bob needs funds quickly
+  - Bob submits redemption request for 1000 mCKB
+  - Waits 7 days
+  - Receives 990 CKB (1,000 - 10 fee) while treasury receives 10 CKB as redemption fee
+  - 1000 mCKB is burned and the same amount of debt is removed
+
+3. **Instant redemption (2% fee)**:
+  - Bob needs immediate liquidity
+  - Bob submits redemption request for 1000 mCKB
+  - No waiting time
+  - Receives 980 CKB immediately while treasury receives 20 CKB as redemption fee
+  - 1000 mCKB is burned and the same amount of debt is removed
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+### Example 4: Maintaining Healthy ICR
+
+**Scenario**: Alice's ICR drops due to interest accrual;
+
+- **Initial state**: 2,000 CKB collateral, 1,000 CKB debt → ICR = 200%
+- **Interest accrual**: Alice's debt grows daily at 10% APR
+- **After interest accrual**: 2,000 CKB collateral, 1,080 CKB debt → ICR = 185%
+- **Action needed**: If ICR approaches the Critical Collateral Ratio (CCR, 180%), Alice must:
+  - Add more collateral, OR
+  - Repay debt using CKB or mCKB
+
+If Alice's ICR falls below 180% (CCR), she will be put into recovery mode; daily soft liquidation of 5% debt will happen and extra 5% interest will be applied until ICR goes up above CCR;
+If Alice's ICR falls below 150% (LCR), hard liquidation is triggered automatically;
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+### Example 5: Liquidation Process
+
+**Scenario**: Eve (Miner) faces liquidation due to accumulated interest and failing to maintain her ICR.
+
+**Initial state**:
+- Collateral: 5,000 CKB
+- Debt: 1,000 CKB
+- ICR = 5,000 / 1,000 = 500% (healthy)
+
+**Step 1: Interest accrual over time**
+- Debt accumulates interest: 1,000 → 1,500 CKB
+- ICR = 5,000 / 1,500 = 333% (still healthy, but declining)
+
+**Step 2: Entering Recovery Mode (ICR < CCR)**
+- Debt continues to grow: 1,500 → 2,800 CKB
+- ICR = 5,000 / 2,800 = 178% (falls below CCR 180%)
+- **Recovery Mode activated**:
+  - Actions that would lower ICR are blocked
+  - Daily soft liquidation begins by 5%
+  - Additional recovery mode interest of 5% is applied
+
+**Step 3: Soft Liquidation (Daily)**
+- Each day, 5% of debt is liquidated: 2,800 × 5% = 140 CKB debt
+- Collateral used: 140 × MCR (e.g., 150%) = 210 CKB
+- After liquidation:
+  - Debt: 2,800 - 140 = 2,660 CKB
+  - Collateral: 5,000 - 210 = 4,790 CKB
+  - ICR = 4,790 / 2,660 = 180% (slightly improved)
+  - Treasury receives 210 CKB as collateral and 140 CKB as debt
+- This process repeats daily until ICR > CCR OR until hard liquidation occurs
+
+**Step 4: Hard Liquidation (ICR < MCR)**
+If soft liquidation fails to restore health and ICR continues to drop:
+
+- **Final state**: ICR falls below MCR (e.g., 150%)
+- **Hard liquidation triggered**:
+  - All remaining collateral transferred to Treasury
+  - Liquidation reserve (50 CKB) transferred to Treasury
+  - All remaining debt cleared
+  - Eve's position closed: collateral = 0, debt = 0
+  - Treasury receives all the remaining collateral and debt
+
+**Key takeaways**:
+- Miners must actively monitor and maintain ICR above CCR
+- Recovery mode provides a grace period with daily soft liquidation
+- Hard liquidation is a last resort that fully closes the position
+- Treasury absorbs liquidated positions to maintain protocol solvency
+
+</Tabs.Tab>
+</Tabs>
 
 ## Mechanisms
 
